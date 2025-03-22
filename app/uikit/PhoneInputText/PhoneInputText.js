@@ -15,10 +15,11 @@ const styles = StyleSheet.create({
     marginLeft: 0,
   },
   containerStyle: {
-    backgroundColor:'#E8E8E8' ,
+    backgroundColor: WHITE,
     borderWidth: 1,
     height: 50,
-   
+    borderColor:"",
+   borderRadius:10,
     width: '100%',
   },
   textContainerStyle: {
@@ -63,15 +64,15 @@ const PhoneInputText = (
   let borderColor = BORDER_COLOR;
   if (isFocused) {
     if (!isEmpty(error)) {
-      //borderColor = ERROR;
+      borderColor = ERROR;
     } else {
-     // borderColor = PRIMARY;
+      borderColor = PRIMARY;
     }
   } else {
     if (!isEmpty(error)) {
-      //borderColor = ERROR;
+      borderColor = ERROR;
     } else {
-     // borderColor = BORDER_COLOR;
+     borderColor = BORDER_COLOR;
     }
   }
 

@@ -11,8 +11,7 @@ import { StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import SvgBack from '../icons/SvgBack';
 import { useUserSignupMutation } from '../uikit/UikitUtils/Apiconfig';
-import SvgEye from '../icons/SvgEye';
-import SvgEyeOff from '../icons/SvgEyeoff';
+
 import {CountryPicker} from 'react-native-country-codes-picker';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -22,7 +21,8 @@ import {ERROR, PRIMARY, WHITE} from '../uikit/UikitUtils/colors';
 const { width, height } = Dimensions.get('window');
 import Loader from '../uikit/Loader/Loader';
 import RegisterSuccessModal from './registersuccess';
-
+import SvgEyeOutline from '../icons/SvgEyleOutLine';
+import SvgEye from '../icons/SvgEye';
 const SignUpScreen = () => {
   const phoneInput = useRef(null);
   const [isSuccess, setSuccess] = useState(false);
@@ -40,6 +40,8 @@ const SignUpScreen = () => {
     { label: 'India', value: 'IN' },
     { label: 'Canada', value: 'CA' },
   ];
+  const [hidePassword, setHidePassword] = useState(true);
+  const [hidePassword1, setHidePassword1] = useState(true);
   const phone = [
     { label: '+91', value: 'IN' },
     { label: '+9', value: 'IN' },
@@ -87,11 +89,14 @@ const [loading, setloading] = useState(false)
           locationID: 0,
           countryID: 0,
         };
+        console.log(payload,'payload')
         const response = await signupMutation(payload);
 setloading(false)
     setSuccess(true)
-
+    console.log(response,'response')
         if (response.error) {
+        
+
           console.error('Signup Error:', response.error);
         }
       } catch (error) {
@@ -123,19 +128,29 @@ setloading(false)
           <Text style={styles.subText}>Add Profile Photo</Text>
 
           <Text style={styles.label}>Name</Text>
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Enter your Name"
             value={formik.values.userName}
             onChangeText={formik.handleChange('userName')}
             onBlur={formik.handleBlur('userName')}
-          />
-          {formik.touched.userName && formik.errors.userName && (
-            <Text style={styles.errorText}>{formik.errors.userName}</Text>
-          )}
+          /> */}
+
+<InputText
+                    name={'userName'}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    error={formik.errors.userName && formik.touched.userName}
+                    maxLength={20}
+                    placeholder="Name *"
+                    value={formik.values.userName}
+                    onChange={formik.handleChange('userName')}
+                  />
+
+         
 
           <Text style={styles.label}>Email Address</Text>
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="abc@gmail.com"
             keyboardType="email-address"
@@ -145,10 +160,24 @@ setloading(false)
           />
           {formik.touched.email && formik.errors.email && (
             <Text style={styles.errorText}>{formik.errors.email}</Text>
-          )}
+          )} */}
+ <InputText
+                  keyboardType={'email-address'}
+                  name={'email'}
+                  touched={formik.touched}
+                  errors={formik.errors}
+                  error={formik.errors.email && formik.touched.email}
+                  maxLength={50}
+                  actionLeftStyle={{left: -4}}
+               
+                  placeholder="Email Address *"
+                  value={formik.values.email}
+                  onChange={formik.handleChange('email')}
+                />
+
 
           <Text style={styles.label}>Password</Text>
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Create password"
             secureTextEntry={!isPasswordVisible}
@@ -158,10 +187,30 @@ setloading(false)
           />
           {formik.touched.password && formik.errors.password && (
             <Text style={styles.errorText}>{formik.errors.password}</Text>
-          )}
+          )} */}
+
+<InputText
+                  maxLength={12}
+                  actionLeftStyle={{left: -4}}
+                 
+                  placeholder=" Confirm Password *"
+                  value={formik.values.password}
+                  onChange={formik.handleChange('password')}
+                  name={'password'}
+                  touched={formik.touched}
+                  errors={formik.errors}
+                  error={formik.errors.password && formik.touched.password}
+                  secureTextEntry={hidePassword}
+                  actionRight={() => (
+                    <TouchableOpacity
+                      onPress={() => setHidePassword(!hidePassword)}>
+                      {hidePassword ? <SvgEyeOutline /> : <SvgEye />}
+                    </TouchableOpacity>
+                  )}
+                />
 
           <Text style={styles.label}>Confirm Password</Text>
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Confirm password"
             secureTextEntry={!isPasswordVisible}
@@ -171,7 +220,28 @@ setloading(false)
           />
           {formik.touched.confirmPassword && formik.errors.confirmPassword && (
             <Text style={styles.errorText}>{formik.errors.confirmPassword}</Text>
-          )}
+          )} */}
+
+<InputText
+                  maxLength={12}
+                  actionLeftStyle={{left: -4}}
+                 
+                  placeholder="Password *"
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange('confirmPassword')}
+                  name={'confirmPassword'}
+                  touched={formik.touched}
+                  errors={formik.errors}
+                  error={formik.errors.confirmPassword && formik.touched.confirmPassword}
+                  secureTextEntry={hidePassword1}
+                  actionRight={() => (
+                    <TouchableOpacity
+                      onPress={() => setHidePassword1(!hidePassword1)}>
+                      {hidePassword1 ? <SvgEyeOutline /> : <SvgEye />}
+                    </TouchableOpacity>
+                  )}
+                />
+
 
           <Text style={styles.label}>Mobile Number</Text>
           {/* <TouchableOpacity onPress={() => setShow(true)} style={styles.rowContainer}>
@@ -233,7 +303,7 @@ setloading(false)
        
 
           <Text style={styles.label}>Address</Text>
-          <TextInput
+          {/* <TextInput
             style={styles.input1}
             placeholder="Enter your address"
             multiline={true}
@@ -244,8 +314,17 @@ setloading(false)
           />
           {formik.touched.address && formik.errors.address && (
             <Text style={styles.errorText}>{formik.errors.address}</Text>
-          )}
-
+          )} */}
+<InputText
+                    name={'address'}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    error={formik.errors.address && formik.touched.address}
+                    maxLength={20}
+                    placeholder="Address *"
+                    value={formik.values.address}
+                    onChange={formik.handleChange('address')}
+                  />
           <Text style={styles.label}>Country</Text>
           <Dropdown
             style={styles.dropdown}

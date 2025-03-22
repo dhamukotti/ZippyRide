@@ -59,7 +59,7 @@ export const inputTextStyles = StyleSheet.create({
     borderRadius: 8,
   },
   round: {
-    borderRadius: 20,
+    borderRadius: 10,
   },
   disabled: {
     backgroundColor: GRAY_5,

@@ -1,34 +1,18 @@
-import React from "react";
-import Svg, { Path } from "react-native-svg";
+import React from 'react';
+import Svg, {Path} from 'react-native-svg';
+
 const defaultProps = {
-  width: 22,
-  height: 16, // Reduced height
-  fill: 'red',
-};
-const SvgEye = ({ width, height, fill }) => {
-  return (
-    <Svg viewBox="0 0 24 24" fill="none" 
-    width={width} height={height} xmlns="http://www.w3.org/2000/svg">
-      <Path
-        d="M15.0007 12C15.0007 13.6569 13.6576 15 12.0007 15C10.3439 15 9.00073 13.6569 9.00073 12C9.00073 10.3431 10.3439 9 12.0007 9C13.6576 9 15.0007 10.3431 15.0007 12Z"
-        stroke="#7f7f7f" 
-        strokeWidth={1} 
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-      />
-      <Path
-        d="M12.0012 5C7.52354 5 3.73326 7.94288 2.45898 12C3.73324 16.0571 7.52354 19 12.0012 19C16.4788 19 20.2691 16.0571 21.5434 12C20.2691 7.94291 16.4788 5 12.0012 5Z"
-        stroke="#7f7f7f" 
-        strokeWidth={1} 
-        strokeLinecap="round"
-      />
-    </Svg>
-  );
+  width: 24,
+  height: 24,
+  fill: '#979797'
 };
 
+const SvgEye = ({width, height,fill}) => (
+  <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+    <Path fill={fill} d="M15 12c0 1.654-1.346 3-3 3s-3-1.346-3-3 1.346-3 3-3 3 1.346 3 3zm9-.449s-4.252 8.449-11.985 8.449c-7.18 0-12.015-8.449-12.015-8.449s4.446-7.551 12.015-7.551c7.694 0 11.985 7.551 11.985 7.551zm-7 .449c0-2.757-2.243-5-5-5s-5 2.243-5 5 2.243 5 5 5 5-2.243 5-5z" />
+  </Svg>
+);
 
 SvgEye.defaultProps = defaultProps;
 
 export default SvgEye;
-
-

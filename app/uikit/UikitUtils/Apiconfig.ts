@@ -119,7 +119,7 @@ import {
       // * Authentication
       userLogin: build.mutation({
         query: payload => ({
-          url: 'Authentication/MobileLogin',
+          url: 'users/login',
           method: 'POST',
           body: payload,
         }),
