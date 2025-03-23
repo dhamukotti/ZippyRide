@@ -2,153 +2,198 @@ import React, { useState } from 'react';
 import { 
   View, 
   Text, 
-  TextInput, 
   TouchableOpacity, 
   Image, 
   StyleSheet, 
   Dimensions,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,Keyboard
+  Platform,
+  Keyboard
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import SvgEmail from '../icons/SvgEmail';
-import SvgPassword from '../icons/SvgPassword';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import {BLACK, ERROR, SUCCESS, WHITE} from '../uikit/UikitUtils/colors';
+import Toast from 'react-native-toast-message';
+
 import SvgBack from '../icons/SvgBack';
 import SvgEye from '../icons/SvgEye';
-import SvgEyeOff from '../icons/SvgEyeoff';
-import { useFormik } from 'formik';
-import SvgUser from '../icons/SvgUser';
-import * as Yup from 'yup';
-import Flex from '../uikit/Flex/Flex';
 import SvgEyeOutline from '../icons/SvgEyleOutLine';
-import InputText from '../uikit/InputText/InputText';
-const { width, height } = Dimensions.get('window');
 
-import {ERROR, PRIMARY, WHITE} from '../uikit/UikitUtils/colors';
+import InputText from '../uikit/InputText/InputText';
 import Button from '../uikit/Button/Button';
 import { useUserLoginMutation } from '../uikit/UikitUtils/Apiconfig';
+
+const { width, height } = Dimensions.get('window');
+import Loader from '../uikit/Loader/Loader';
 const SignInScreen = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
-  const [isLoader, setLoader] = useState(true);
-  const [loginMutation, { isLoading: isSignupLoading }] = useUserLoginMutation();
-const [loading, setloading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [loginMutation] = useUserLoginMutation();
 
-   const SignUpSchema = Yup.object().shape({
-    MobileOrEmail: Yup.string().required('Email is required'),
-      password: Yup.string()
-        .min(8, 'Password must be at least 8 characters')
-        
-        .required('Password is required'),
-    
-    });
+  const SignUpSchema = Yup.object().shape({
+    MobileOrEmail: Yup.string().required('The email address or mobile number you entered is not connected to an account'),
+    password: Yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
+  });
+
   const formik = useFormik({
-    initialValues: {
-      MobileOrEmail: '',
-      password: '',
-      
-    },
+    initialValues: { MobileOrEmail: '', password: '' },
     validationSchema: SignUpSchema,
     onSubmit: async (values) => {
-      // setloading(true)
+      setLoading(true)
       try {
-        const payload = {
-          MobileOrEmail: values.MobileOrEmail,
-        
-          password: values.password,
-         
-        };
-        console.log(payload,'payload')
+        const payload = { MobileOrEmail: values.MobileOrEmail, password: values.password };
+        console.log('Payload:', payload);
         const response = await loginMutation(payload);
-setloading(false)
-    // setSuccess(true)
-    console.log(response,'response')
-        if (response.error) {
         
-
-          console.error('Signup Error:', response.error);
+        setLoading(false);
+     console.log(response)
+        if (response.error) {
+          Toast.show({
+            type: 'error', // Use the custom type
+            text1: 'Error',
+            text2: 'Invalid credentials',
+            position: 'top', // Set position to top
+            topOffset: 5, // Adjust distance from the top
+          });
+        }else {
+      
+          Showsuccess()
+          setTimeout(() => {
+            navigation.navigate('Places')
+          }, 1000);
         }
+        
       } catch (error) {
+       
         console.error('Signup failed:', error);
       }
     },
   });
+
+
+  const toastConfig = {
+    success: ({ text1, text2 }) => (
+      <View style={{backgroundColor:'#F5F6F8',padding:10,borderRadius:20,width:'80%', alignSelf: 'center', // Align to the right
+        marginTop: 50, }}>
+      <Text style={{ color: 'green',
+    fontWeight: 'bold',
+    fontSize: 16,}}>{text1}</Text>
+        <Text style={{ color: 'black',
+    fontWeight: 'bold',
+    fontSize: 16,}}>{text2}</Text>
+      </View>
+    ),
+    error: ({ text1, text2 }) => (
+      <View style={{backgroundColor:'#F5F6F8',padding:10,borderRadius:10,width:'80%', alignSelf: 'center', // Align to the right
+        marginTop: 50, }}>
+        <Text style={{ color: 'red',
+    fontWeight: 'bold',
+    fontSize: 16,}}>{text1}</Text>
+        <Text style={{ color: 'black',
+    fontWeight: 'bold',
+    fontSize: 16,}}>{text2}</Text>
+      </View>
+    ),
+    customToast: ({ text1, text2 }) => (
+      <View style={{backgroundColor:'#F5F6F8',padding:10,borderRadius:10,width:'80%', alignSelf: 'center', // Align to the right
+        marginTop: 50, }}>
+        <Text style={{ color: 'red',
+    fontWeight: 'bold',
+    fontSize: 16,}}>{text1}</Text>
+        <Text style={{ color: 'black',
+    fontWeight: 'bold',
+    fontSize: 16,}}>{text2}</Text>
+      </View>
+    ),
+  };
+  
+
+
+  const Showsuccess = () => {
+    Toast.show({
+      type: 'customToast', // Use the custom type
+      text1: 'Success',
+      text2: 'Login Succefully ✅ ',
+      position: 'top', // Set position to top
+      topOffset: 5, // Adjust distance from the top
+    });
+  };
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-      style={styles.container}
-    >
-         {loading &&  <Loader /> }
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+   {loading &&  <Loader /> }
+   <Toast
+        config={toastConfig}
+        ref={(ref) => Toast.setRef(ref)}
+        position="top" // Set global position to top
+      />
+       
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         {/* Back Button */}
-        <TouchableOpacity onPress={() => navigation.navigate('Common')} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <SvgBack height={20} width={20} />
         </TouchableOpacity>
 
-        {/* Image */}
-        <Image source={require('../assets/image1.png')} style={styles.image} />
+        {/* Centered Content */}
+        <View style={styles.content}>
+          {/* Image */}
+          <Image source={require('../assets/image1.png')} style={styles.image} />
 
-        <Flex flex={1} between>
-          <Flex overrideStyle={[styles.inputContainer]}>
-            <Text size={20} bold overrideStyle={styles.loginText}>
-              Login Here
-            </Text>
-
-          
+          {/* Email Input */}
+          <Text style={styles.label}> Email or Phone</Text>
           <InputText
-                              name={'MobileOrEmail'}
-                              touched={formik.touched}
-                              errors={formik.errors}
-                              error={formik.errors.MobileOrEmail && formik.touched.MobileOrEmail}
-                              maxLength={20}
-                              placeholder="Name *"
-                              value={formik.values.MobileOrEmail}
-                              onChange={formik.handleChange('MobileOrEmail')}
-                            />
-            <View style={{marginVertical: 20, marginBottom: 20}}>
-           <InputText
-                             maxLength={12}
-                             actionLeftStyle={{left: -4}}
-                            
-                             placeholder=" Confirm Password *"
-                             value={formik.values.password}
-                             onChange={formik.handleChange('password')}
-                             name={'password'}
-                             touched={formik.touched}
-                             errors={formik.errors}
-                             error={formik.errors.password && formik.touched.password}
-                             secureTextEntry={hidePassword}
-                             actionRight={() => (
-                               <TouchableOpacity
-                                 onPress={() => setHidePassword(!hidePassword)}>
-                                 {hidePassword ? <SvgEyeOutline /> : <SvgEye />}
-                               </TouchableOpacity>
-                             )}
-                           />
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(routesPath.FORGOT_PASSWORD_SCREEN)
-                }
-                style={styles.forgotStyle}>
-                <Text bold color="theme">
-                  Forgot password ?
-                </Text>
+            name="MobileOrEmail"
+            touched={formik.touched}
+            errors={formik.errors}
+            error={formik.errors.MobileOrEmail && formik.touched.MobileOrEmail}
+            maxLength={50}
+            placeholder="abc@gmail.com"
+            value={formik.values.MobileOrEmail}
+            onChange={formik.handleChange('MobileOrEmail')}
+          />
+
+          {/* Password Input */}
+          <Text style={styles.label}>Password</Text>
+          <InputText
+            maxLength={12}
+            placeholder="Enter password"
+            value={formik.values.password}
+            onChange={formik.handleChange('password')}
+            name="password"
+            touched={formik.touched}
+            errors={formik.errors}
+            error={formik.errors.password && formik.touched.password}
+            secureTextEntry={hidePassword}
+            actionRight={() => (
+              <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
+                {hidePassword ? <SvgEyeOutline /> : <SvgEye />}
               </TouchableOpacity>
-            </View>
-            <Button
-              onClick={() => {
-                Keyboard.dismiss();
-                formik.handleSubmit();
-              }}>
-              LOGIN
-            </Button>
+            )}
+          />
+
+          {/* Forgot Password - Right Aligned */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('FORGOT_PASSWORD_SCREEN')}
+            style={styles.forgotStyle}
+          >
+            <Text style={styles.forgotText}>Forgot Password?</Text>
+          </TouchableOpacity>
+
+          {/* Login Button */}
+          <Button onClick={() => 
+            {
+              Keyboard.dismiss();
+                formik.handleSubmit(); 
           
-          </Flex>
-        </Flex>
+
+            }} style={styles.button}>
+            Sign in
+          </Button>
+        
+          {/* <Toast ref={(ref) => Toast.setRef(ref)} /> */}
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -157,14 +202,12 @@ setloading(false)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F8F8',
-   alignContent:'center',
-   justifyContent:'center'
+    backgroundColor: '#ffffff',
   },
   scrollContainer: {
     flexGrow: 1,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: width * 0.05,
   },
   backButton: {
@@ -174,61 +217,41 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 10,
   },
+  content: {
+    width: width * 0.9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   image: {
     width: width * 0.7,
     height: height * 0.25,
     resizeMode: 'contain',
     marginBottom: 20,
   },
-  
   label: {
-    fontSize: 14,
-    color: '#333',
+    alignSelf: 'flex-start',
+    fontSize: width * 0.038,
     fontWeight: '500',
-    marginBottom: 6,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F4F4F4',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    height: 55,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  icon: {
-    marginRight: 12,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
     color: '#333',
+    marginBottom: 5,
   },
-  eyeIcon: {
-    padding: 5,
-  },
-  forgotPassword: {
+  forgotStyle: {
     alignSelf: 'flex-end',
+    marginTop: 5,
     marginBottom: 20,
   },
   forgotText: {
-    fontSize: 14,
+    fontSize: width * 0.04,
     color: '#4A90E2',
     fontWeight: '500',
   },
-  signInButton: {
-    backgroundColor: '#E6D25A',
-    paddingVertical: 16,
+  button: {
+    backgroundColor: '#E5D463',
     borderRadius: 10,
-    alignItems: 'center',
+    paddingVertical: 12,
+    width: '100%',
   },
-  signInText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-  },
+ 
 });
 
 export default SignInScreen;
