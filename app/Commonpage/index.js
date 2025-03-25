@@ -3,9 +3,12 @@ import { View, Text, TouchableOpacity, Dimensions, StyleSheet } from 'react-nati
 
 const { width, height } = Dimensions.get('window');
 import { useNavigation } from '@react-navigation/native';
+import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid, Platform, Alert } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+// import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
+import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
+import SvgPhone from '../icons/SvgPhone';
 const WelcomeScreen = () => {
     const navigation = useNavigation()
 
@@ -15,109 +18,241 @@ useEffect(() => {
 }, [])
 
 
-
-
-    const requestLocationPermission = async () => {
-      if (Platform.OS === 'android') {
-        try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-              title: 'Location Permission',
-              message: 'This app needs access to your location.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            }
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('Location permission granted');
-            getCurrentLocation();
-          } else {
-            console.log('Location permission denied');
-          }
-        } catch (err) {
-          console.warn(err);
+const requestLocationPermission = async () => {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'This app needs access to your location.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
         }
-      } else if (Platform.OS === 'ios') {
-        const permission = PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
-        const result = await check(permission);
-        if (result === RESULTS.GRANTED) {
-          console.log('Location permission granted');
-          getCurrentLocation();
-        } else if (result === RESULTS.DENIED) {
-          const requestResult = await request(permission);
-          if (requestResult === RESULTS.GRANTED) {
-            console.log('Location permission granted');
-            getCurrentLocation();
-          } else {
-            console.log('Location permission denied');
-          }
-        } else {
-          console.log('Location permission denied');
-        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Location permission granted');
+        handleEnabledPressed();
+      } else {
+        console.log('Location permission denied');
       }
-      if (Platform.OS === 'android') {
-        try {
-          const cameraPermission = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            {
-              title: 'Camera Permission',
-              message: 'This app needs access to your camera.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            }
-          );
-    
-          const storagePermission = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-            {
-              title: 'Storage Permission',
-              message: 'This app needs access to your storage to save files.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            }
-          );
-    
-          if (
-            cameraPermission === PermissionsAndroid.RESULTS.GRANTED &&
-            storagePermission === PermissionsAndroid.RESULTS.GRANTED
-          ) {
-            console.log('Camera and Storage permissions granted');
-          } else {
-            console.log('Camera or Storage permission denied');
-          }
-        } catch (err) {
-          console.warn(err);
-        }
-      } else if (Platform.OS === 'ios') {
-        const cameraStatus = await request(PERMISSIONS.IOS.CAMERA);
-        const photoLibraryStatus = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
-    
-        if (cameraStatus === RESULTS.GRANTED && photoLibraryStatus === RESULTS.GRANTED) {
-          console.log('Camera and Photo Library permissions granted');
-        } else {
-          console.log('Camera or Photo Library permission denied');
-        }
+    } catch (err) {
+      console.warn(err);
+    }
+  } else if (Platform.OS === 'ios') {
+    const permission = PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
+    const result = await check(permission);
+    if (result === RESULTS.GRANTED) {
+      console.log('Location permission granted');
+      handleEnabledPressed()
+    } else if (result === RESULTS.DENIED) {
+      const requestResult = await request(permission);
+      if (requestResult === RESULTS.GRANTED) {
+        console.log('Location permission granted');
+        handleEnabledPressed()
+      } else {
+        console.log('Location permission denied');
       }
-    };
+    } else {
+      console.log('Location permission denied');
+    }
+  }
+  if (Platform.OS === 'android') {
+    try {
+      const cameraPermission = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Camera Permission',
+          message: 'This app needs access to your camera.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+
+      const storagePermission = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: 'Storage Permission',
+          message: 'This app needs access to your storage to save files.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+
+      if (
+        cameraPermission === PermissionsAndroid.RESULTS.GRANTED &&
+        storagePermission === PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('Camera and Storage permissions granted');
+      } else {
+        console.log('Camera or Storage permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  } else if (Platform.OS === 'ios') {
+    const cameraStatus = await request(PERMISSIONS.IOS.CAMERA);
+    const photoLibraryStatus = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+
+    if (cameraStatus === RESULTS.GRANTED && photoLibraryStatus === RESULTS.GRANTED) {
+      console.log('Camera and Photo Library permissions granted');
+    } else {
+      console.log('Camera or Photo Library permission denied');
+    }
+  }
+};
+async function handleEnabledPressed() {
+  if (Platform.OS === 'android') {
+    try {
+      const enableResult = await promptForEnableLocationIfNeeded();
+      console.log('enableResult', enableResult);
+      // The user has accepted to enable the location services
+      // data can be :
+      //  - "already-enabled" if the location services has been already enabled
+      //  - "enabled" if user has clicked on OK button in the popup
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        // The user has not accepted to enable the location services or something went wrong during the process
+        // "err" : { "code" : "ERR00|ERR01|ERR02|ERR03", "message" : "message"}
+        // codes :
+        //  - ERR00 : The user has clicked on Cancel button in the popup
+        //  - ERR01 : If the Settings change are unavailable
+        //  - ERR02 : If the popup has failed to open
+        //  - ERR03 : Internal error
+      }
+    }
+  }
+}
+
+    // const requestLocationPermission = async () => {
+    //   if (Platform.OS === 'android') {
+    //     try {
+    //       const granted = await PermissionsAndroid.request(
+    //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //         {
+    //           title: 'Location Permission',
+    //           message: 'This app needs access to your location.',
+    //           buttonNeutral: 'Ask Me Later',
+    //           buttonNegative: 'Cancel',
+    //           buttonPositive: 'OK',
+    //         }
+    //       );
+    //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //         console.log('Location permission granted');
+    //         getCurrentLocation();
+    //       } else {
+    //         console.log('Location permission denied');
+    //       }
+    //     } catch (err) {
+    //       console.warn(err);
+    //     }
+    //   } else if (Platform.OS === 'ios') {
+    //     const permission = PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
+    //     const result = await check(permission);
+    //     if (result === RESULTS.GRANTED) {
+    //       console.log('Location permission granted');
+    //       getCurrentLocation();
+    //     } else if (result === RESULTS.DENIED) {
+    //       const requestResult = await request(permission);
+    //       if (requestResult === RESULTS.GRANTED) {
+    //         console.log('Location permission granted');
+    //         getCurrentLocation();
+    //       } else {
+    //         console.log('Location permission denied');
+    //       }
+    //     } else {
+    //       console.log('Location permission denied');
+    //     }
+    //   }
+    //   if (Platform.OS === 'android') {
+    //     try {
+    //       const cameraPermission = await PermissionsAndroid.request(
+    //         PermissionsAndroid.PERMISSIONS.CAMERA,
+    //         {
+    //           title: 'Camera Permission',
+    //           message: 'This app needs access to your camera.',
+    //           buttonNeutral: 'Ask Me Later',
+    //           buttonNegative: 'Cancel',
+    //           buttonPositive: 'OK',
+    //         }
+    //       );
+    
+    //       const storagePermission = await PermissionsAndroid.request(
+    //         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    //         {
+    //           title: 'Storage Permission',
+    //           message: 'This app needs access to your storage to save files.',
+    //           buttonNeutral: 'Ask Me Later',
+    //           buttonNegative: 'Cancel',
+    //           buttonPositive: 'OK',
+    //         }
+    //       );
+    
+    //       if (
+    //         cameraPermission === PermissionsAndroid.RESULTS.GRANTED &&
+    //         storagePermission === PermissionsAndroid.RESULTS.GRANTED
+    //       ) {
+    //         console.log('Camera and Storage permissions granted');
+    //       } else {
+    //         console.log('Camera or Storage permission denied');
+    //       }
+    //     } catch (err) {
+    //       console.warn(err);
+    //     }
+    //   } else if (Platform.OS === 'ios') {
+    //     const cameraStatus = await request(PERMISSIONS.IOS.CAMERA);
+    //     const photoLibraryStatus = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+    
+    //     if (cameraStatus === RESULTS.GRANTED && photoLibraryStatus === RESULTS.GRANTED) {
+    //       console.log('Camera and Photo Library permissions granted');
+    //     } else {
+    //       console.log('Camera or Photo Library permission denied');
+    //     }
+    //   }
+    // };
   
 
   
-    const getCurrentLocation = () => {
+    // const getCurrentLocation = () => {
+    //   Geolocation.getCurrentPosition(
+    //     (position) => {
+    //       console.log(position);
+    //     },
+    //     (error) => {
+    //       console.log(error.code, error.message);
+    //     },
+    //     { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    //   );
+    // };
+  
+
+    const getCurrentLocation = async () => {
+      const hasPermission = await requestLocationPermission();
+      if (!hasPermission) {
+        console.warn('Location permission denied');
+        return;
+      }
+    
       Geolocation.getCurrentPosition(
         (position) => {
-          console.log(position);
+          const { latitude, longitude } = position.coords;
+          console.log('Latitude:', latitude, 'Longitude:', longitude);
         },
         (error) => {
-          console.log(error.code, error.message);
+          console.error('Error getting location:', error);
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 10000,
+        }
       );
     };
-  
+    
   return (
     <View style={styles.container}>
       {/* Logo */}
@@ -146,11 +281,18 @@ useEffect(() => {
       {/* Login via phone */}
       <View style={styles.spacer} />
       <Text style={styles.orText}>— Or —</Text>
-      <TouchableOpacity   style={{cursor:"pointer"}}  onPress={()=>navigation.navigate("Phonelogin")}>
+      {/* <TouchableOpacity   style={{cursor:"pointer"}}  onPress={getCurrentLocation}>
       <Text style={{ fontFamily: 'Times New Roman', fontSize: 18, fontWeight: '600',color :'#5B7FAD'}}>
       Login via Phone Number
     </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
+<TouchableOpacity style={styles.button}>
+  <View style={{marginRight:10}}>
+  <SvgPhone height={25} width={25} fill="black"  />
+  </View>
+      <Text style={styles.text}>Login with Phone</Text>
+    </TouchableOpacity>
 
       {/* Skip */}
       <View style={styles.spacer} />
@@ -195,14 +337,32 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: width * 0.035,
     color: '#555',
+  },button: {
+    width: width * 0.60,
+    height: width * 0.13 ,
+    borderRadius:  12,
+    borderWidth: 1.5,
+    borderColor: 'black',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+  },
+  icon: {
+    marginRight: 8,
+  },
+  text: {
+    fontSize:  18,
+    fontWeight: '500',
+    color: 'black',
   },
   signInButton: {
-    width: '100%',
+    width: '80%',
     backgroundColor: '#DFD46A', // Button color
-    paddingVertical: height * 0.02,
+    paddingVertical: height * 0.015,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: height * 0.02,
+    marginBottom: height * 0.021,
   },
   signInText: {
     fontSize: width * 0.045,
@@ -210,13 +370,16 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   signUpButton: {
-    width: '100%',
+    width: '80%',
     borderColor: 'black',
     borderWidth: 1,
-    paddingVertical: height * 0.02,
+  
+    
+    
+
+    paddingVertical: height * 0.015,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: height * 0.04, // Increased gap below Sign Up button
   },
   signUpText: {
     fontSize: width * 0.045,

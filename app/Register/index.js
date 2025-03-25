@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react';
+import React, { useState,useRef,useEffect } from 'react';
 import { 
   View, Text, TextInput,useColorScheme, TouchableOpacity, Image, ScrollView, 
   KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard 
@@ -11,6 +11,7 @@ import { StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import SvgBack from '../icons/SvgBack';
 import { useUserSignupMutation } from '../uikit/UikitUtils/Apiconfig';
+import Geolocation from '@react-native-community/geolocation';
 
 import {CountryPicker} from 'react-native-country-codes-picker';
 import { useFormik } from 'formik';
@@ -36,7 +37,80 @@ const SignUpScreen = () => {
   const [whatsAppcountryName, setWhatsAppCountryName] = useState('IN');
   const [countryCode, setCountryCode] = useState('+91');
   const [whatsAppcountryCode, setWhatsAppCountryCode] = useState('+91');
-  const countries = [
+const [address, setaddress] = useState("")
+
+
+
+useEffect(() => {
+  getCurrentLocation()
+}, [])
+
+
+
+    // const getCurrentLocation = async () => {
+       
+    //     Geolocation.getCurrentPosition(
+    //       (position) => {
+    //         const { latitude, longitude } = position.coords;
+    //         console.log('Latitude:', latitude, 'Longitude:', longitude);
+    //       },
+    //       (error) => {
+    //         console.error('Error getting location:', error);
+    //       },
+    //       {
+    //         enableHighAccuracy: true,
+    //         timeout: 15000,
+    //         maximumAge: 10000,
+    //       }
+    //     );
+    //   };
+ 
+    const getCurrentLocation = async () => {
+      Geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log('Latitude:', latitude, 'Longitude:', longitude);
+          await getAddressFromCoordinates(latitude, longitude);
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 10000,
+        }
+      );
+ 
+    };
+    const getAddressFromCoordinates = async (latitude, longitude) => {
+      try {
+        const apiKey = 'AIzaSyDyIPNKYpe9zG_JlEEhl070cC28N0q4qbc'; // Replace with your API Key
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+        );
+        const data = await response.json();
+    
+        if (data.results.length > 0) {
+          const address = data.results[0].formatted_address;
+          console.log('Current Address:', address);
+          setaddress(address)
+        } else {
+          console.log('No address found');
+        }
+      } catch (error) {
+        console.error('Error fetching address:', error);
+      }
+    };
+    
+ 
+    const countries = [
+
+
+
+
+
+
     { label: 'United States', value: 'US' },
     { label: 'India', value: 'IN' },
     { label: 'Canada', value: 'CA' },
@@ -176,7 +250,10 @@ setloading(false)
           <TouchableOpacity style={styles.profilePhotoContainer}>
             <Image source={require('../assets/camera12.png')} style={styles.profilePhoto} />
           </TouchableOpacity>
-          <Text style={styles.subText}>Add Profile Photo</Text>
+          <Text style={styles.subText}>Add Profile Photo
+
+          {address}
+          </Text>
 
           <Text style={[styles.label,{ color: colorScheme === 'dark' ? 'black' : 'black' }]}>Name</Text>
         
