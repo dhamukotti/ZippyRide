@@ -89,16 +89,25 @@ const [loading, setloading] = useState(false)
           password: values.password,
           locationID: 0,
           countryID: 0,
+          otp:"SU"
         };
         console.log(payload,'payload')
         const response = await signupMutation(payload);
 setloading(false)
-    setSuccess(true)
+  
     console.log(response,'response')
         if (response.error) {
-        
+          Toast.show({
+                    type: 'error', // Use the custom type
+                    text1: 'Error',
+                    text2: 'Something Went to wrong',
+                    position: 'top', // Set position to top
+                    topOffset: 5, // Adjust distance from the top
+                  });
 
           console.error('Signup Error:', response.error);
+        }else {
+          setSuccess(true)
         }
       } catch (error) {
         console.error('Signup failed:', error);
@@ -111,9 +120,50 @@ setloading(false)
     setSuccess(false);
     formik.resetForm();
   };
+   const toastConfig = {
+      success: ({ text1, text2 }) => (
+        <View style={{backgroundColor:'#fafafa',padding:10,borderRadius:20,width:'80%', alignSelf: 'center', // Align to the right
+          marginTop: 50, }}>
+        <Text style={{ color: 'green',
+      fontWeight: 'bold',
+      fontSize: 16,}}>{text1}</Text>
+          <Text style={{ color: 'black',
+      fontWeight: 'bold',
+      fontSize: 16,}}>{text2}</Text>
+        </View>
+      ),
+      error: ({ text1, text2 }) => (
+        <View style={{backgroundColor:'#fafafa',padding:10,borderRadius:10,width:'80%', alignSelf: 'center', // Align to the right
+          marginTop: 50, }}>
+          <Text style={{ color: 'red',
+      fontWeight: 'bold',
+      fontSize: 16,}}>{text1}</Text>
+          <Text style={{ color: 'black',
+      fontWeight: 'bold',
+      fontSize: 16,}}>{text2}</Text>
+        </View>
+      ),
+      customToast: ({ text1, text2 }) => (
+        <View style={{backgroundColor:'#fafafa',padding:10,borderRadius:10,width:'80%', alignSelf: 'center', // Align to the right
+          marginTop: 50, }}>
+          <Text style={{ color: 'red',
+      fontWeight: 'bold',
+      fontSize: 16,}}>{text1}</Text>
+          <Text style={{ color: 'black',
+      fontWeight: 'bold',
+      fontSize: 16,}}>{text2}</Text>
+        </View>
+      ),
+    };
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
    {loading &&  <Loader /> }
+    <Toast
+           config={toastConfig}
+           ref={(ref) => Toast.setRef(ref)}
+           position="top" // Set global position to top
+         />
+          
    <RegisterSuccessModal open={isSuccess} close={handleClose} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.contentContainer}>
@@ -164,10 +214,10 @@ setloading(false)
         
 
 <InputText
-                  maxLength={12}
+                  maxLength={30}
                   actionLeftStyle={{left: -4}}
                  
-                  placeholder=" Confirm Password *"
+                  placeholder="Password *"
                   value={formik.values.password}
                   onChange={formik.handleChange('password')}
                   name={'password'}
@@ -187,7 +237,7 @@ setloading(false)
           
 
 <InputText
-                  maxLength={12}
+                  maxLength={30}
                   actionLeftStyle={{left: -4}}
                  
                   placeholder="Password *"
@@ -238,17 +288,36 @@ setloading(false)
        
 
           <Text style={[styles.label,{ color: colorScheme === 'dark' ? 'black' : 'black' }]}>Address</Text>
-         
-<InputText
+          <InputText
+                  overrideStyle={{textAlignVertical: 'top'}}
+                  height={130}
+                  numberOfLines={30}
+                  multiline
+                  maxLength={4000}
+                  actionLeftStyle={{left: -4, top: 0}}
+                 
+                
+                  placeholder="Address *"
+                  value={formik.values.address}
+                  onChange={formik.handleChange('address')}
+                  name={'address'}
+                  touched={formik.touched}
+                  errors={formik.errors}
+                  error={formik.errors.address && formik.touched.address}
+                />
+{/* <InputText
                     name={'address'}
                     touched={formik.touched}
                     errors={formik.errors}
                     error={formik.errors.address && formik.touched.address}
-                    maxLength={20}
+                    maxLength={100}
+                    height={130}
+                    numberOfLines={30}
+                    multiline
                     placeholder="Address *"
                     value={formik.values.address}
                     onChange={formik.handleChange('address')}
-                  />
+                  /> */}
           <Text style={[styles.label,{ color: colorScheme === 'dark' ? 'black' : 'black' }]}>Country</Text>
           {/* <Dropdown
             style={styles.dropdown}
@@ -275,13 +344,9 @@ setloading(false)
         valueField="value"
         placeholder="Select item"
         searchPlaceholder="Search..."
-        value={value}
-        onChange={item => {
-          setValue(item.value);
-        }}
-        renderLeftIcon={() => (
-          <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-        )}
+        value={formik.values.country}
+        onChange={(item) => formik.setFieldValue('country', item.value)}
+       
       />
 
 

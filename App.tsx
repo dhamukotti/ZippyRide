@@ -21,6 +21,7 @@ import Phonelogin from './app/Phonelogin'
 import OTPVerificationScreen from './app/OtpScreen/OtpScreen';
 import CityToCityScreen from './app/Citytocity/Citytocity';
 import OfflineScreen from './app/Offinescreen/Offlinescreen';
+import LocationComponent from './app/Location';
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
 
@@ -64,10 +65,11 @@ export default function App() {
   <SafeAreaProvider>
     
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName='Common'>
         <Stack.Screen name="Common"   options={{ headerShown: false }} component={Common} />
       <Stack.Screen name="Phonelogin"   options={{ headerShown: false }} component={Phonelogin} />
-      
+      <Stack.Screen name="LocationComponent"   options={{ headerShown: false }} component={LocationComponent} />
+
       
         <Stack.Screen name="Login"   options={{ headerShown: false }} component={LoginScreen} />
         <Stack.Screen name="Landing"  options={{ headerShown: false }} component={Landingpage} />
