@@ -252,7 +252,7 @@ setloading(false)
           </TouchableOpacity>
           <Text style={styles.subText}>Add Profile Photo
 
-          {address}
+
           </Text>
 
           <Text style={[styles.label,{ color: colorScheme === 'dark' ? 'black' : 'black' }]}>Name</Text>
@@ -317,7 +317,7 @@ setloading(false)
                   maxLength={30}
                   actionLeftStyle={{left: -4}}
                  
-                  placeholder="Password *"
+                  placeholder="Confirm Password *"
                   value={formik.values.confirmPassword}
                   onChange={formik.handleChange('confirmPassword')}
                   name={'confirmPassword'}

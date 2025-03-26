@@ -128,10 +128,28 @@ import {
       // * ForgetPassword
       forgotPasswordOTP: build.mutation({
         query: payload => ({
-          url: 'Authentication/ForgetPasswordSendOTP',
+          url: 'users/send-otp',
           method: 'POST',
           body: payload,
         }),
+      }),
+      Forgotpassword: build.mutation({
+        query: payload => ({
+          url: 'users/forgot-password',
+          method: 'POST',
+          body: payload,
+        }),
+      }),
+      verifyotp: build.mutation({
+        query: payload => ({
+          url: 'users/validate-otp',
+          method: 'POST',
+          body: payload,
+        }),
+
+
+
+        
       }),
   
   
@@ -160,7 +178,7 @@ import {
     useUserSignupMutation,
     useUserLoginMutation,
     useForgotPasswordOTPMutation,
-    useGetuserinformationMutation,
+    useGetuserinformationMutation,useVerifyotpMutation,useForgotpasswordMutation
     
   } = api;
   

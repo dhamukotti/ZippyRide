@@ -287,7 +287,7 @@ async function handleEnabledPressed() {
     </Text>
           </TouchableOpacity> */}
 
-<TouchableOpacity style={styles.button}>
+<TouchableOpacity onPress={()=>navigation.navigate('Phonelogin')} style={styles.button}>
   <View style={{marginRight:10}}>
   <SvgPhone height={25} width={25} fill="black"  />
   </View>

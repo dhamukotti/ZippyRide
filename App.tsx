@@ -22,6 +22,10 @@ import OTPVerificationScreen from './app/OtpScreen/OtpScreen';
 import CityToCityScreen from './app/Citytocity/Citytocity';
 import OfflineScreen from './app/Offinescreen/Offlinescreen';
 import LocationComponent from './app/Location';
+import Forgotpassword from './app/Forgorpassword/Forgotpassword';
+import ForgotPasswordVerifyScreen from './app/Forgorpassword/Forgotpasswordverifyscreen';
+
+import CreatePasswordScreen from './app/Forgorpassword/Createpasswordscreen';
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
 
@@ -65,7 +69,7 @@ export default function App() {
   <SafeAreaProvider>
     
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='Common'>
+        <Stack.Navigator initialRouteName='Landing'>
         <Stack.Screen name="Common"   options={{ headerShown: false }} component={Common} />
       <Stack.Screen name="Phonelogin"   options={{ headerShown: false }} component={Phonelogin} />
       <Stack.Screen name="LocationComponent"   options={{ headerShown: false }} component={LocationComponent} />
@@ -75,8 +79,11 @@ export default function App() {
         <Stack.Screen name="Landing"  options={{ headerShown: false }} component={Landingpage} />
         <Stack.Screen name="OTPVerificationScreen"   options={{ headerShown: false }} component={OTPVerificationScreen} />
         <Stack.Screen name="CityToCityScreen"   options={{ headerShown: false }} component={CityToCityScreen} />
-
+        <Stack.Screen name="Forgotpassword"   options={{ headerShown: false }} component={Forgotpassword} />
+        <Stack.Screen name="ForgotPasswordVerifyScreen"   options={{ headerShown: false }} component={ForgotPasswordVerifyScreen} />
         
+        <Stack.Screen name="CreatePasswordScreen"   options={{ headerShown: false }} component={CreatePasswordScreen} />
+
         
         <Stack.Screen name="Places"   options={{ headerShown: false }} component={Places} />
         <Stack.Screen name="Register"   options={{ headerShown: false }} component={Register} />
