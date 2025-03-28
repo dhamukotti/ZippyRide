@@ -7,7 +7,7 @@ import {
   StyleSheet, 
   Dimensions,
   ScrollView,
-  KeyboardAvoidingView,
+  KeyboardAvoidingView,ImageBackground,
   Platform,
   Keyboard
 } from 'react-native';
@@ -34,7 +34,7 @@ const SignInScreen = () => {
   const [loginMutation] = useUserLoginMutation();
 
   const SignUpSchema = Yup.object().shape({
-    MobileOrEmail: Yup.string().required('The email address or mobile number you entered is not connected to an account'),
+    MobileOrEmail: Yup.string().required('Please Enter email address or mobile number '),
     password: Yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
   });
 
@@ -122,7 +122,10 @@ const SignInScreen = () => {
     });
   };
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+    
+    <ImageBackground 
+    source={require('../assets/frame.jpeg')}
+ style={styles.container}>
    {loading &&  <Loader /> }
    <Toast
         config={toastConfig}
@@ -149,6 +152,7 @@ const SignInScreen = () => {
             errors={formik.errors}
             error={formik.errors.MobileOrEmail && formik.touched.MobileOrEmail}
             maxLength={50}
+            keyboardType='text'
             placeholder="abc@gmail.com"
             value={formik.values.MobileOrEmail}
             onChange={formik.handleChange('MobileOrEmail')}
@@ -195,7 +199,7 @@ const SignInScreen = () => {
           {/* <Toast ref={(ref) => Toast.setRef(ref)} /> */}
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 
@@ -241,7 +245,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   forgotText: {
-    fontSize: width * 0.04,
+    fontSize: 15,
     color: '#4A90E2',
     fontWeight: '500',
   },

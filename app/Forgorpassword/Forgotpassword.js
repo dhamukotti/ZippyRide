@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Keyboard,
-  Image,
+  Image,ImageBackground
 } from 'react-native';
 import SvgMail from '../icons/SvgMail';
 import Button from '../uikit/Button/Button';
@@ -40,9 +40,7 @@ const Forgotpassword = () => {
       setIsLoading(true);
       try {
         const payload = { Email: values.Email, OtpType: 'FP' };
-        console.log(payload,'payload')
         const response = await ForgotMutation(payload);
-        console.log(response,'ress')
         setIsLoading(false);
         if (response.error) {
           Toast.show({
@@ -117,9 +115,10 @@ const Forgotpassword = () => {
     };
     
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
+    <ImageBackground
+     // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      source={require('../assets/frame.jpeg')}
+     style={styles.container}
     >
       <Toast   config={toastConfig} ref={(ref) => Toast.setRef(ref)} position="top" />
       {isLoading &&  <Loader /> }
@@ -154,7 +153,7 @@ const Forgotpassword = () => {
           </View>
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 

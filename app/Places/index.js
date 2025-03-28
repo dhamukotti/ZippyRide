@@ -18,7 +18,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import React, { useState, useRef,useEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { API_KEY } from '../uikit/UikitUtils/constants';
-
+import Button from '../uikit/Button/Button';
 import SvgRightArrow from '../icons/SvgRightArrow';
 import SvgGps from '../icons/SvgGps';
 
@@ -35,7 +35,7 @@ const BOX_WIDTH = width * 0.9;
 const BOX_HEIGHT = height * 0.3;
 const MARGIN_TOP = height * 0.03;
 const INPUT_WIDTH = width * 0.9;
-const INPUT_HEIGHT = height * 0.06;
+const INPUT_HEIGHT = height * 0.05;
 const GOOGLE_MAPS_APIKEY = 'AIzaSyDyIPNKYpe9zG_JlEEhl070cC28N0q4qbc'; // Replace with your API key
 
 const Index = () => {
@@ -129,26 +129,6 @@ const Index = () => {
         </LinearGradient>
       </TouchableOpacity>
 
-      {/* <FlatList
-      data={carCategories}
-      keyExtractor={(item) => item.id}
-   
-numColumns={4}
-      contentContainerStyle={styles.flatlistcontainer}
-      renderItem={({ item }) => (
-        <View style={[styles.item, { width: itemWidth }]}> 
-          <Image source={item.image} style={styles.image} />
-        </View>
-      )}
-    /> */}
-
-{/*  */}
-
-
-
-
-
-
       {/* Current Location Input */}
       <View style={styles.inputWrapper(isOriginExpanded)}>
         <GooglePlacesAutocomplete
@@ -163,12 +143,14 @@ numColumns={4}
           textInputProps={{
             onFocus: () => setIsOriginExpanded(true), // Expand when focused
             onBlur: () => setIsOriginExpanded(false), // Collapse when unfocused
-            autoFocus: true,
+            autoFocus: false,
             style: styles.inputStyles,
+            placeholderTextColor: 'black', // <-- Set placeholder color
+
           }}
           query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
           fetchDetails={true}
-          renderRow={(data) => <Text>{data.description}</Text>}
+          renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
           renderRightButton={() => (
             <Pressable>
               <Flex center middle overrideStyle={styles.svgGps}>
@@ -193,12 +175,14 @@ numColumns={4}
           textInputProps={{
             onFocus: () => setIsDestinationExpanded(true), // Expand when focused
             onBlur: () => setIsDestinationExpanded(false), // Collapse when unfocused
-            autoFocus: true,
+            autoFocus: false,
             style: styles.inputStyles,
+            placeholderTextColor: 'black', // <-- Set placeholder color
+
           }}
           query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
           fetchDetails={true}
-          renderRow={(data) => <Text>{data.description}</Text>}
+          renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
           renderRightButton={() => (
             <Pressable>
               <Flex center middle overrideStyle={styles.svgGps}>
@@ -261,11 +245,13 @@ numColumns={4}
     switchWidthMultiplier={2}
   />
 </View>
-<TouchableOpacity style={styles.continuebutton} onPress={()=>navigation.navigate("OTPVerificationScreen")} activeOpacity={0.8}>
+{/* <TouchableOpacity style={styles.continuebutton} onPress={()=>navigation.navigate("OTPVerificationScreen")} activeOpacity={0.8}>
       <Text style={styles.text}>Continue</Text>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
 
-    
+  <Button onClick={()=>navigation.navigate("OTPVerificationScreen")} width={120} >
+              Continue
+            </Button>
     </KeyboardAvoidingView>
   );
 };
@@ -278,6 +264,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#FFFFF',
+  },
+  button: {
+    backgroundColor: '#E8D66A',
+    borderRadius: 10,
+    paddingVertical: 12,
+    top:10,
+    color:'#E8D66A',
+    width: '100%',
   },
   mapBox: {
     width: BOX_WIDTH,
@@ -299,14 +293,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: BORDER_COLOR,
     borderRadius: 4,
-    color: BLACK,
+    color: 'black',
     paddingHorizontal: 16,
     fontSize: 14,
   },
   svgGps: {
     position: 'absolute',
     right: 10,
-    top: 10,
+    top: 5,
     height: 40,
     width: 40,
     justifyContent: 'center',

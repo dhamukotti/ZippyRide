@@ -24,7 +24,7 @@ import OfflineScreen from './app/Offinescreen/Offlinescreen';
 import LocationComponent from './app/Location';
 import Forgotpassword from './app/Forgorpassword/Forgotpassword';
 import ForgotPasswordVerifyScreen from './app/Forgorpassword/Forgotpasswordverifyscreen';
-
+import VersionCheck from './app/VersionChecker/index'
 import CreatePasswordScreen from './app/Forgorpassword/Createpasswordscreen';
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -73,6 +73,7 @@ export default function App() {
         <Stack.Screen name="Common"   options={{ headerShown: false }} component={Common} />
       <Stack.Screen name="Phonelogin"   options={{ headerShown: false }} component={Phonelogin} />
       <Stack.Screen name="LocationComponent"   options={{ headerShown: false }} component={LocationComponent} />
+      <Stack.Screen name="VersionCheck"   options={{ headerShown: false }} component={VersionCheck} />
 
       
         <Stack.Screen name="Login"   options={{ headerShown: false }} component={LoginScreen} />

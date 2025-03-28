@@ -5,19 +5,20 @@ import { useNavigation, } from '@react-navigation/native'
 const { width, height } = Dimensions.get("window");
 import SvgGps from '../icons/SvgGps';
 
-
+import InputText from '../uikit/InputText/InputText';
 import { BLACK, BORDER_COLOR, PRIMARY } from '../uikit/UikitUtils/colors';
 import { inputTextStyles } from '../uikit/InputText/InputTextStyles';
 import Flex from '../uikit/Flex/Flex';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
 import 'react-native-get-random-values';
+import Button from '../uikit/Button/Button';
 
 const BOX_WIDTH = width * 0.9;
 const BOX_HEIGHT = height * 0.3;
 const MARGIN_TOP = height * 0.03;
 const INPUT_WIDTH = width * 0.9;
-const INPUT_HEIGHT = height * 0.06
+const INPUT_HEIGHT = height * 0.05
 const GOOGLE_MAPS_APIKEY = 'AIzaSyDyIPNKYpe9zG_JlEEhl070cC28N0q4qbc'; // Replace with your API key
 
 const Citytocity = () => {
@@ -52,12 +53,13 @@ const Citytocity = () => {
           textInputProps={{
             onFocus: () => setIsOriginExpanded(true), // Expand when focused
             onBlur: () => setIsOriginExpanded(false), // Collapse when unfocused
-            autoFocus: true,
+            autoFocus: false,
             style: styles.inputStyles,
+            placeholderTextColor:'black'
           }}
           query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
           fetchDetails={true}
-          renderRow={(data) => <Text>{data.description}</Text>}
+          renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
           renderRightButton={() => (
             <Pressable>
               <Flex center middle overrideStyle={styles.svgGps}>
@@ -80,12 +82,13 @@ const Citytocity = () => {
           textInputProps={{
             onFocus: () => setIsDestinationExpanded(true), // Expand when focused
             onBlur: () => setIsDestinationExpanded(false), // Collapse when unfocused
-            autoFocus: true,
+            autoFocus: false,
             style: styles.inputStyles,
+            placeholderTextColor:'black'
           }}
           query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
           fetchDetails={true}
-          renderRow={(data) => <Text>{data.description}</Text>}
+          renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
           renderRightButton={() => (
             <Pressable>
               <Flex center middle overrideStyle={styles.svgGps}>
@@ -100,57 +103,81 @@ const Citytocity = () => {
           {/* Email Input */}
           <Text style={styles.label}> When</Text>
           <View style={styles.inputWrapperINPUT}>
-            <TextInput
+            {/* <TextInput
               style={styles.input}
               placeholder="Now"
               placeholderTextColor="#888"
             
-            />
+            /> */}
+            <InputText
+                        name="Now"
+                      
+                        placeholder="Now"
+                      />
           </View>
 
           {/* Password Input */}
           <Text style={styles.label}> No of Passengers</Text>
           <View style={styles.inputWrapperINPUT}>
-            <TextInput
+            {/* <TextInput
               style={styles.input}
               placeholder="5"
               placeholderTextColor="#888"
              
-            />
+            /> */}
+             <InputText
+                        name="Now"
+                      types='number'
+                        placeholder="5"
+                      />
            
           </View>
     {/* Password Input */}
     <Text style={styles.label}>Amount Request</Text>
           <View style={styles.inputWrapperINPUT}>
-            <TextInput
+            {/* <TextInput
               style={styles.input}
               placeholder="Rs 500"
               placeholderTextColor="#888"
              
-            />
+            /> */}
            
+           <InputText
+                        name="Now"
+                      
+                        placeholder="500"
+                      />
           </View>
           <Text style={styles.label}>Comments
 
           </Text>
           <View style={styles.inputWrapperINPUT}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Comments"
-              placeholderTextColor="#888"
-             
-            />
+             <InputText
+                             overrideStyle={{textAlignVertical: 'top'}}
+                             height={130}
+                             numberOfLines={30}
+                             multiline
+                             maxLength={4000}
+                             actionLeftStyle={{left: -4, top: 0}}
+                            
+                           
+                             placeholder="Comments *"
+                             name={'address'}
+                           
+                           />
            
           </View>
 
         </View>
         <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.continueButton}>
+                {/* <TouchableOpacity style={styles.continueButton}>
                     <Text style={styles.continueText}>Continue</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.cancelButton}>
+                </TouchableOpacity> */}
+                <Button>Continue</Button>
+                <Button overrideStyle >Cancel Ride</Button>
+                {/* <TouchableOpacity style={styles.cancelButton}>
                     <Text style={styles.cancelText}>Cancel Ride</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
     </KeyboardAvoidingView>
   )
@@ -168,7 +195,7 @@ const styles = StyleSheet.create({
       },
       inputContainer: {
         width: '100%',
-        top:30,
+        top:20,
         backgroundColor:'#F8F8F8'
       },
       backButton: {
@@ -182,18 +209,22 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontSize: width * 0.05,
         fontWeight: 'bold',
+        color:'black'
     },
     inputWrapperINPUT: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F8F8F8',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        height: 55,
-        marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-      },
+      top:10
+    },
+    // inputWrapperINPUT: {
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+    //     backgroundColor: '#F8F8F8',
+    //     borderRadius: 8,
+    //     paddingHorizontal: 12,
+    //     height: 55,
+    //     marginBottom: 15,
+    //     borderWidth: 1,
+    //     borderColor: '#E0E0E0',
+    //   },
     inputWrapper: (isExpanded) => ({
         width: INPUT_WIDTH,
         marginTop: 30,
@@ -204,7 +235,7 @@ const styles = StyleSheet.create({
           height: INPUT_HEIGHT,
           borderWidth: 1,
           borderColor: BORDER_COLOR,
-          backgroundColor:'#E8E8E8',
+          backgroundColor:'white',
           borderRadius: 4,
           color: BLACK,
           paddingHorizontal: 16,
@@ -218,7 +249,7 @@ const styles = StyleSheet.create({
       svgGps: {
         position: 'absolute',
         right: 10,
-        top: 10,
+        top: 5,
         height: 40,
         width: 40,
         justifyContent: 'center',
@@ -228,6 +259,7 @@ const styles = StyleSheet.create({
         color: '#333',
         fontWeight: '500',
         marginBottom: 6,
+        top:10
       },
       buttonContainer: {
         flexDirection: 'row',

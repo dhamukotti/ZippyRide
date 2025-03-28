@@ -8,9 +8,14 @@ import {
   StyleSheet, 
   Dimensions,
   ScrollView,
-  KeyboardAvoidingView,
+  KeyboardAvoidingView,ImageBackground,
   Platform
+
 } from 'react-native';
+import Button from '../uikit/Button/Button';
+
+import SvgEyeOutline from '../icons/SvgEyleOutLine';
+import InputText from '../uikit/InputText/InputText';
 import { useNavigation } from '@react-navigation/native';
 import Svgmobile from '../icons/Svgmobile';
 import SvgPassword from '../icons/SvgPassword';
@@ -25,11 +30,13 @@ const SignInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [hidePassword, setHidePassword] = useState(true);
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+    <ImageBackground 
+    //  behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
       style={styles.container}
+      source={require('../assets/frame.jpeg')}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         {/* Back Button */}
@@ -42,9 +49,9 @@ const SignInScreen = () => {
 
         <View style={styles.inputContainer}>
           {/* Email Input */}
-          <Text style={styles.label}> Email</Text>
+          <Text style={styles.label}> Mobile number</Text>
           <View style={styles.inputWrapper}>
-            <Svgmobile height={20} width={20} style={styles.icon} />
+            {/* <Svgmobile height={20} width={20} style={styles.icon} />
             <TextInput
               style={styles.input}
               placeholder="Enter Your Phone Number"
@@ -53,13 +60,20 @@ const SignInScreen = () => {
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
-            />
+            /> */}
+              <InputText
+                        name="Mobile number"
+                      
+                        maxLength={50}
+                        keyboardType='text'
+                        placeholder="Mobile Number"
+                      />
           </View>
 
           {/* Password Input */}
           <Text style={styles.label}> Password</Text>
           <View style={styles.inputWrapper}>
-            <SvgPassword height={20} width={20} style={styles.icon} />
+            {/* <SvgPassword height={20} width={20} style={styles.icon} />
             <TextInput
               style={styles.input}
               placeholder="Enter Your Password"
@@ -67,10 +81,20 @@ const SignInScreen = () => {
               secureTextEntry={!isPasswordVisible}
               value={password}
               onChangeText={setPassword}
-            />
-            <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.eyeIcon}>
-              {isPasswordVisible ? <SvgEye height={20} width={20} /> : <SvgEyeOff height={20} width={20} />}
-            </TouchableOpacity>
+            /> */}
+             <InputText
+                        maxLength={12}
+                        placeholder="Enter password"
+                        name="password"
+                       
+                        secureTextEntry={hidePassword}
+                        actionRight={() => (
+                          <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
+                            {hidePassword ? <SvgEyeOutline /> : <SvgEye />}
+                          </TouchableOpacity>
+                        )}
+                      />
+        
           </View>
 
           {/* Forgot Password */}
@@ -79,12 +103,15 @@ const SignInScreen = () => {
           </TouchableOpacity>
 
           {/* Sign-In Button */}
-          <TouchableOpacity style={styles.signInButton}>
+          {/* <TouchableOpacity style={styles.signInButton}>
             <Text style={styles.signInText}>Login </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+              <Button  style={styles.button}>
+                      Sign in
+                    </Button>
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 
@@ -124,12 +151,10 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F2F2F4',
     borderRadius: 8,
     paddingHorizontal: 14,
     height: 55,
     marginBottom: 15,
-    borderWidth: 1,
     borderColor: '#F2F2F4',
   },
   icon: {
@@ -163,6 +188,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
   },
+  button: {
+    backgroundColor: '#E5D463',
+    borderRadius: 10,
+    paddingVertical: 12,
+    width: '100%',
+  },
+ 
 });
 
 export default SignInScreen;

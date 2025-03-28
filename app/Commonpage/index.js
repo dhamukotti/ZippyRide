@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react';
-import { View, Text, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, StyleSheet, ImageBackground } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 import { useNavigation } from '@react-navigation/native';
@@ -254,7 +254,10 @@ async function handleEnabledPressed() {
     };
     
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+    source={require('../assets/frame.jpeg')}
+    
+    style={styles.container}>
       {/* Logo */}
       <View style={styles.logoContainer}>
         <View style={styles.logo}>
@@ -299,7 +302,7 @@ async function handleEnabledPressed() {
       <TouchableOpacity>
         <Text style={styles.skipText}>SKIP</Text>
       </TouchableOpacity>
-    </View>
+    </ImageBackground>
   );
 };
 

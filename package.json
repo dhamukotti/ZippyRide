@@ -1,6 +1,6 @@
 {
   "name": "Zippy Ride",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -23,6 +23,7 @@
     "react-native": "0.74.5",
     "react-native-android-location-enabler": "^2.0.1",
     "react-native-country-codes-picker": "^2.3.5",
+    "react-native-device-info": "^14.0.4",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-elements": "^3.4.3",
     "react-native-geolocation-service": "^5.3.1",
@@ -50,6 +51,8 @@
     "react-native-svg-transformer": "^1.5.0",
     "react-native-switch": "^1.5.1",
     "react-native-toast-message": "^2.2.0",
+    "react-native-version": "^4.0.0",
+    "react-native-version-check": "^3.4.7",
     "react-redux": "^9.2.0",
     "yup": "^1.6.1"
   },

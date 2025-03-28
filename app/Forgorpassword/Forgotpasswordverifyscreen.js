@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity,Keyboard,Alert,Pressable,Image, View,Dimensions } from 'react-native'
+import { StyleSheet, Text,useColorScheme,ImageBackground, TouchableOpacity,Keyboard,Alert,Pressable,Image, View,Dimensions } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -51,10 +51,8 @@ const handleSubmit = async () => {
     setIsLoading(true);
     try {
       const payload = { Email: emailvalue, OtpType: "FP", otp };
-      console.log("Payload:", payload);
 
       const response = await veriMutton(payload); // Assuming veriMutton is an API function
-      console.log("Response:", response);
 
       setIsLoading(false);
       if (response.data.message == "Invalid OTP") {
@@ -142,14 +140,19 @@ const handleSubmit = async () => {
     );
   }
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+    source={require('../assets/frame.jpeg')}
+     style={styles.container} >
        {isLoading && <Loader />}
      
        <Pressable style={styles.backButton} onPress={() => validatepopup()}>
                <SvgBack height={24} width={24} />
              </Pressable>
      
-   <View style={{flex:1,justifyContent: 'center',
+   <ImageBackground
+   
+   source={require('../assets/frame.jpeg')}
+   style={{flex:1,justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
     backgroundColor: 'white',}}>
@@ -201,8 +204,8 @@ handleSubmit()
         >
           Verify
         </Button>
-   </View>
-    </View>
+   </ImageBackground>
+    </ImageBackground>
   )
 }
 
@@ -211,6 +214,8 @@ export default Forgotpasswordverifyscreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ffffff',
+
     // justifyContent: 'center',
     // alignItems: 'center',
     // paddingHorizontal: 20,
@@ -254,6 +259,7 @@ const styles = StyleSheet.create({
   otpText: {
     fontSize: width * 0.05, // Scales based on screen size
     fontWeight: 'bold',
+    color:'black'
   },
   resendContainer: {
     flexDirection: 'row',

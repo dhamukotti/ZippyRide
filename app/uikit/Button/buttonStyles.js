@@ -16,6 +16,8 @@ export const buttonStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
+    top:15,
+    backgroundColor:'#E8D66A'
   },
   secondaryBtn: {
     borderWidth: 1,
@@ -23,7 +25,7 @@ export const buttonStyles = StyleSheet.create({
     backgroundColor: 'rgba(255, 202, 41, 0.1)',
   },
   primaryBtn: {
-    backgroundColor: SECONDARY,
+    backgroundColor: "#E8D66A",
   },
   disabled: {
     opacity: 0.5,

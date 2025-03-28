@@ -188,6 +188,7 @@ const styles = StyleSheet.create({
   otpText: {
     fontSize: 20,
     textAlign: "center",
+    color:'black'
   },
 });
 
