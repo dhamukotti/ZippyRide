@@ -32,6 +32,10 @@ const SignInScreen = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
 
+  const gotoforgotpassword =()=>{
+    console.log('calle')
+    navigation.navigate('Frogotpaswordmobile')
+  }
   return (
     <ImageBackground 
     //  behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
@@ -98,7 +102,7 @@ const SignInScreen = () => {
           </View>
 
           {/* Forgot Password */}
-          <TouchableOpacity style={styles.forgotPassword}>
+          <TouchableOpacity onPress={gotoforgotpassword} style={styles.forgotPassword}>
             <Text style={styles.forgotText}>Forgot Password?</Text>
           </TouchableOpacity>
 
@@ -106,7 +110,7 @@ const SignInScreen = () => {
           {/* <TouchableOpacity style={styles.signInButton}>
             <Text style={styles.signInText}>Login </Text>
           </TouchableOpacity> */}
-              <Button  style={styles.button}>
+              <Button   style={styles.button}>
                       Sign in
                     </Button>
         </View>
@@ -191,8 +195,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#E5D463',
     borderRadius: 10,
-    paddingVertical: 12,
-    width: '100%',
+    paddingVertical: 2,
+    width: '80%',
   },
  
 });

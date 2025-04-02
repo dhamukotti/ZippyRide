@@ -40,14 +40,14 @@ const Createpasswordscreen = ({route}) => {
   const [forgotPassword] = useForgotpasswordMutation(); // ✅ Correct way to use the hook
 
 
-useEffect(() => {
-    if (route.params?.otp) { // Ensures it runs only if mail is passed
-        setotp(route.params.otp);
-    }
-    if (route.params?.email) { // Ensures it runs only if mail is passed
-      setemail(route.params.email);
-  }
-  }, [route.params?.otp,route.params.email]); 
+// useEffect(() => {
+//     if (route.params?.otp) { // Ensures it runs only if mail is passed
+//         setotp(route.params.otp);
+//     }
+//     if (route.params?.email) { // Ensures it runs only if mail is passed
+//       setemail(route.params.email);
+//   }
+//   }, [route.params?.otp,route.params.email]); 
 
 
 
@@ -212,7 +212,7 @@ useEffect(() => {
 
           <View style={styles.buttonContainer}>
             <Button onClick={() => { Keyboard.dismiss(); formik.handleSubmit(); }} style={styles.btnStyle}>
-              Submit
+              Submits
             </Button>
           </View>
         </View>

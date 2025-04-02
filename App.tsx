@@ -26,7 +26,14 @@ import Forgotpassword from './app/Forgorpassword/Forgotpassword';
 import ForgotPasswordVerifyScreen from './app/Forgorpassword/Forgotpasswordverifyscreen';
 import VersionCheck from './app/VersionChecker/index'
 import CreatePasswordScreen from './app/Forgorpassword/Createpasswordscreen';
+import IncorrectCodeScreen from './app/Forgorpassword/Verificationfailedotp';
+import VerificationSuccessScreen from './app/Forgorpassword/Verificationsuccessotp';
 // Create a stack navigator
+import Frogotpaswordmobile from './app/Forgorpassword/Forgotpasswordmobile'
+import Forgotverifymobile from './app/Forgorpassword/Forgotverifyscreenmobile'
+import Createpasswordmobile from './app/Forgorpassword/Createpassworemobileno'
+// payment requre
+import Paymentrequest from './app/Paymentrequest/Paymentrequest';
 const Stack = createNativeStackNavigator();
 
 // Home Screen Component
@@ -74,7 +81,7 @@ export default function App() {
       <Stack.Screen name="Phonelogin"   options={{ headerShown: false }} component={Phonelogin} />
       <Stack.Screen name="LocationComponent"   options={{ headerShown: false }} component={LocationComponent} />
       <Stack.Screen name="VersionCheck"   options={{ headerShown: false }} component={VersionCheck} />
-
+      
       
         <Stack.Screen name="Login"   options={{ headerShown: false }} component={LoginScreen} />
         <Stack.Screen name="Landing"  options={{ headerShown: false }} component={Landingpage} />
@@ -84,8 +91,16 @@ export default function App() {
         <Stack.Screen name="ForgotPasswordVerifyScreen"   options={{ headerShown: false }} component={ForgotPasswordVerifyScreen} />
         
         <Stack.Screen name="CreatePasswordScreen"   options={{ headerShown: false }} component={CreatePasswordScreen} />
+        <Stack.Screen name="IncorrectCodeScreen"   options={{ headerShown: false }} component={IncorrectCodeScreen} />
+        <Stack.Screen name="VerificationSuccessScreen"   options={{ headerShown: false }} component={VerificationSuccessScreen} />
+{/* mobilenumber forgot */}
+<Stack.Screen name="Frogotpaswordmobile"   options={{ headerShown: false }} component={Frogotpaswordmobile} />
+<Stack.Screen name="Forgotverifymobile"   options={{ headerShown: false }} component={Forgotverifymobile} />
+<Stack.Screen name="Createpasswordmobile"   options={{ headerShown: false }} component={Createpasswordmobile} />
 
-        
+<Stack.Screen name="Paymentrequest"   options={{ headerShown: false }} component={Paymentrequest} />
+
+
         <Stack.Screen name="Places"   options={{ headerShown: false }} component={Places} />
         <Stack.Screen name="Register"   options={{ headerShown: false }} component={Register} />
 

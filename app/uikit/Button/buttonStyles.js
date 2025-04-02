@@ -16,7 +16,7 @@ export const buttonStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-    top:15,
+    top:0,
     backgroundColor:'#E8D66A'
   },
   secondaryBtn: {

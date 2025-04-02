@@ -116,38 +116,39 @@ const Forgotpassword = () => {
         </View>
       ),
     };
+    const redirect = () =>{
+        navigation.navigate('Forgotverifymobile')
+    }
     
   return (
     <ImageBackground
      // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      source={require('../assets/frame.png')}
+      source={require('../assets/frame.jpeg')}
      style={styles.container}
     >
       <Toast   config={toastConfig} ref={(ref) => Toast.setRef(ref)} position="top" />
       {isLoading &&  <Loader /> }
       <TouchableOpacity  style={styles.backButton} onPress={() => navigation.goBack()}>
         <SvgBack height={20} width={20} />
-                  <Text style={{color:'black',fontSize:15,fontWeight:500,left:10}}>Mail Forgot Password</Text>
-        
       </TouchableOpacity>
 
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <Image
-          source={require('../assets/forgotimage.png')}
+          source={require('../assets/mobileph.png')}
           style={styles.image}
           resizeMode="contain"
         />
 
         <View style={styles.overAll}>
         <View style={{ marginBottom: 15 }}>
-        <Text style={styles.label}>Enter Email</Text>
+        <Text style={styles.label}>Enter Mobile</Text>
            <InputText
                      name="Email"
                      touched={formik.touched}
                      errors={formik.errors}
                      error={formik.errors.Email && formik.touched.Email}
                      maxLength={50}
-                     placeholder="Enter your Email"
+                     placeholder="Enter your Mobile Number"
                      value={formik.values.Email}
                      actionLeft={
                       <SvgMail height={20} width={20} />
@@ -157,7 +158,7 @@ const Forgotpassword = () => {
                     </View>
 
 <View style={{ marginBottom: 15 }}>
-<Text style={styles.label}>Confirm Email</Text>
+<Text style={styles.label}>Confirm Mobile</Text>
 
                    <InputText
                      name="confirmEmail"
@@ -165,20 +166,23 @@ const Forgotpassword = () => {
                      errors={formik.errors}
                      error={formik.errors.confirmEmail && formik.touched.confirmEmail}
                      maxLength={50}
-                     placeholder="Enter your confirm Email"
+                     placeholder="Enter your Mobile Number"
                      value={formik.values.confirmEmail}
                      onChange={formik.handleChange('confirmEmail')}
                    />
                      </View>
           <View style={styles.buttonContainer}>
             <Button 
-              disabled={
-                !formik.values.Email || // Check if Email field is empty
-                !formik.values.confirmEmail || // Check if Confirm Email field is empty
-                formik.values.Email !== formik.values.confirmEmail // Check if both fields match
-              }
-            onClick={() => { Keyboard.dismiss(); 
-            formik.handleSubmit(); }}
+            //   disabled={
+            //     !formik.values.Email || // Check if Email field is empty
+            //     !formik.values.confirmEmail || // Check if Confirm Email field is empty
+            //     formik.values.Email !== formik.values.confirmEmail // Check if both fields match
+            //   }
+            onClick={() =>
+                 { Keyboard.dismiss(); 
+          //  formik.handleSubmit();
+            redirect()
+        }}
              style={styles.btnStyle}>
               Submit
             </Button>
@@ -213,7 +217,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: height * 0.03,
     left: width * 0.02,
-    flexDirection:'row',
     zIndex: 10,
     padding: 10,
   },

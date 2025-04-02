@@ -136,7 +136,8 @@ const SignInScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         {/* Back Button */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <SvgBack height={20} width={20} />
+          <SvgBack height={19} width={19} />
+          <Text style={{color:'black',fontSize:15,fontWeight:500,left:10}}>Sign In with Mail</Text>
         </TouchableOpacity>
 
         {/* Centered Content */}
@@ -145,7 +146,7 @@ const SignInScreen = () => {
           <Image source={require('../assets/image1.png')} style={styles.image} />
 
           {/* Email Input */}
-          <Text style={styles.label}> Email or Phone</Text>
+          <Text style={styles.label}> Enter Email </Text>
           <InputText
             name="MobileOrEmail"
             touched={formik.touched}
@@ -219,7 +220,9 @@ const styles = StyleSheet.create({
     top: height * 0.05,
     left: width * 0.05,
     zIndex: 10,
+    flexDirection: "row",
     padding: 10,
+   
   },
   content: {
     width: width * 0.9,

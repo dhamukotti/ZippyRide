@@ -166,14 +166,12 @@ const handleSubmit = async () => {
   //const maskEmail = (email) => email.replace(/^(.{2}).*(@)/, "$1**$2");
   return (
     <ImageBackground 
-    source={require('../assets/frame.png')}
+    source={require('../assets/frame.jpeg')}
      style={styles.container} >
        {isLoading && <Loader />}
      
        <Pressable style={styles.backButton} onPress={() => validatepopup()}>
                <SvgBack height={24} width={24} />
-   <Text style={{color:'black',fontSize:15,fontWeight:500,left:10}}>Verifi One time Password</Text>
-               
              </Pressable>
      
    <ImageBackground
@@ -192,14 +190,14 @@ const handleSubmit = async () => {
         />
 
 <Text bold size={24} color="black" style={styles.title}>
-          Enter One Time Password  
+          Enter Verification Code 
         </Text>
         <Text bold size={10} color="gray" style={styles.title1}>
-        We’ve sent Verification code to
+        We’ve sent OTP to
         </Text>
         <Text color="gray" style={styles.description}>
-{maskedEmail}       
-
+{/* {maskedEmail}        */}
++9190**3179
  </Text>
 
         <View style={styles.otpWrapper}>
@@ -217,7 +215,7 @@ const handleSubmit = async () => {
         </View>
 
         <View style={styles.resendContainer}>
-          <Text style={{color:'gray',textAlign:'center'}}>Code Expires in <Text style={{color:'red',left:20}}>{formatTime(timer)} </Text></Text>
+          <Text style={{color:'gray',textAlign:'center'}}>OTP Expires in <Text style={{color:'red',marginLeft:20}}>{formatTime(timer)} </Text></Text>
        
 
        
@@ -230,19 +228,19 @@ const handleSubmit = async () => {
         </View>
         <View >
         
-        <Text style={{color:'red',textAlign:'center',textDecorationLine:'blue'}}> Try with Phone Number </Text>
+        <Text style={{color:'red',textAlign:'center',textDecorationLine:'blue'}}> Try with Email </Text>
 
        
         </View>
   
 {/* <Button>Test</Button> */}
         <Button
-          disabled={otp.length !== 6}
+         // disabled={otp.length !== 6}
          onClick={() => { Keyboard.dismiss(); 
 
-handleSubmit()       
+// handleSubmit()       
 
-
+navigation.navigate('Createpasswordmobile')
 }}
           style={styles.verifyButton}
         >
@@ -268,7 +266,6 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     top: height * 0.06,
-    flexDirection:'row',
     left: width * 0.05,
     zIndex: 10,
   },
