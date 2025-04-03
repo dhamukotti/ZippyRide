@@ -35,8 +35,9 @@ import Createpasswordmobile from './app/Forgorpassword/Createpassworemobileno'
 // payment requre
 import Paymentrequest from './app/Paymentrequest/Paymentrequest';
 const Stack = createNativeStackNavigator();
-
+import RiderVerificationScreen from './app/BookingSuccess/RiderVerificationScreen';
 // Home Screen Component
+import PaymentScreen from './app/BookingSuccess/PaymentScreen';
 function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -99,6 +100,10 @@ export default function App() {
 <Stack.Screen name="Createpasswordmobile"   options={{ headerShown: false }} component={Createpasswordmobile} />
 
 <Stack.Screen name="Paymentrequest"   options={{ headerShown: false }} component={Paymentrequest} />
+
+<Stack.Screen name="RiderVerificationScreen"   options={{ headerShown: false }} component={RiderVerificationScreen} />
+
+<Stack.Screen name="PaymentScreen"   options={{ headerShown: false }} component={PaymentScreen} />
 
 
         <Stack.Screen name="Places"   options={{ headerShown: false }} component={Places} />

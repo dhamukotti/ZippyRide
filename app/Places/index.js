@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
   Platform,
   Pressable,
-  FlatList,Image
+  FlatList,
+  Image,
+  ScrollView,
+  Keyboard
 } from 'react-native';
 import { Switch } from 'react-native-switch';
 import {PERMISSIONS, request} from 'react-native-permissions';
@@ -15,7 +18,7 @@ import SvgBack from '../icons/SvgBack';
 import { useNavigation } from '@react-navigation/native';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import React, { useState, useRef,useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { API_KEY } from '../uikit/UikitUtils/constants';
 import Button from '../uikit/Button/Button';
@@ -30,31 +33,33 @@ import MapViewDirections from 'react-native-maps-directions';
 import 'react-native-get-random-values';
 
 const { width, height } = Dimensions.get('window');
-
+const userIcon = require('../assets/human.jpg');
+const carIcon = require('../assets/car-white.png'); 
 const BOX_WIDTH = width * 0.9;
 const BOX_HEIGHT = height * 0.3;
 const MARGIN_TOP = height * 0.03;
-const INPUT_WIDTH = width * 0.9;
+const INPUT_WIDTH = width * 0.91;
 const INPUT_HEIGHT = height * 0.05;
-const GOOGLE_MAPS_APIKEY = 'AIzaSyDyIPNKYpe9zG_JlEEhl070cC28N0q4qbc'; // Replace with your API key
-
+const GOOGLE_MAPS_APIKEY = 'AIzaSyDyIPNKYpe9zG_JlEEhl070cC28N0q4qbc';
+const INPUT_WIDTH1 =width * 0.91;
 const Index = () => {
-  const navigation =useNavigation()
+  const navigation = useNavigation();
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [isOriginExpanded, setIsOriginExpanded] = useState(false);
   const [isDestinationExpanded, setIsDestinationExpanded] = useState(false);
   const mapRef = useRef(null);
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isAmountEnabled, setIsAmountEnabled] = useState(false);
+  const [isLadyDriverEnabled, setIsLadyDriverEnabled] = useState(false);
+  const [selectedCar, setSelectedCar] = useState('');
+  const scrollViewRef = useRef(null);
 
-  const carCategories = [
-    { id: "1", name: "EV", image: require("../assets/ev.png") },
-    { id: "2", name: "SUV", image: require("../assets/suv.png") },
-    { id: "3", name: "HATCHBACK", image: require("../assets/hatchback.png") },
-    { id: "4", name: "SEDAN", image: require("../assets/sedan.png") },
+  const carOptions = [
+    { id: "1", type: "EV", image: require("../assets/ev.png") },
+    { id: "2", type: "SUV", image: require("../assets/suv.png") },
+    { id: "3", type: "HATCHBACK", image: require("../assets/hatchback.png") },
+    { id: "4", type: "SEDAN", image: require("../assets/sedan.png") },
   ];
-  const itemWidth = width / 4.5;
-
 
   async function handleLocationPermission() {
     var res = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
@@ -80,178 +85,244 @@ const Index = () => {
     }
   }
 
-  
+  // Handle keyboard appearance to scroll to inputs
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      (e) => {
+        // Scroll to the focused input
+        if (isOriginExpanded || isDestinationExpanded) {
+          scrollViewRef.current?.scrollTo({
+            y: e.endCoordinates.height,
+            animated: true
+          });
+        }
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+    };
+  }, [isOriginExpanded, isDestinationExpanded]);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                <SvgBack height={20} width={20} />
-              </TouchableOpacity>
-      <MapView
-        ref={mapRef}
-        style={styles.mapBox}
-        initialRegion={{
-          latitude: 13.0827,
-          longitude: 80.2707,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        }}
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
       >
-        {origin && <Marker coordinate={origin} title="Pickup Location" />}
-        {destination && <Marker coordinate={destination} title="Drop Location" />}
-        {origin && destination && (
-          <MapViewDirections
-            origin={origin}
-            destination={destination}
-            apikey={GOOGLE_MAPS_APIKEY}
-            strokeWidth={1.4}
-            strokeColor="black"
-            onReady={(result) => {
-              mapRef.current.fitToCoordinates(result.coordinates, {
-                edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-              });
-            }}
-          />
-        )}
-      </MapView>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <SvgBack height={20} width={20} />
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.touch} activeOpacity={0.8}>
-        <LinearGradient
-          colors={['#F6EFA6', '#B8A224']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.button}
+        <MapView
+          ref={mapRef}
+          style={styles.mapBox}
+          initialRegion={{
+            latitude: 13.0827,
+            longitude: 80.2707,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          }}
         >
-          <Text style={styles.text}>Pickup within 10 minutes?</Text>
-          <SvgRightArrow width={12} height={12} fill="black" />
-        </LinearGradient>
-      </TouchableOpacity>
-
-      {/* Current Location Input */}
-      <View style={styles.inputWrapper(isOriginExpanded)}>
-        <GooglePlacesAutocomplete
-          placeholder="Current Location"
-          onPress={(data, details = null) => {
-            setOrigin({
-              latitude: details.geometry.location.lat,
-              longitude: details.geometry.location.lng,
-            });
-            setIsOriginExpanded(false); // Collapse when selection is made
-          }}
-          textInputProps={{
-            onFocus: () => setIsOriginExpanded(true), // Expand when focused
-            onBlur: () => setIsOriginExpanded(false), // Collapse when unfocused
-            autoFocus: false,
-            style: styles.inputStyles,
-            placeholderTextColor: 'black', // <-- Set placeholder color
-
-          }}
-          query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
-          fetchDetails={true}
-          renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
-          renderRightButton={() => (
-            <Pressable>
-              <Flex center middle overrideStyle={styles.svgGps}>
-                <SvgGps fill={PRIMARY} />
-              </Flex>
-            </Pressable>
+          {origin && (
+            <Marker coordinate={origin} title="Pickup Location">
+              <Image source={userIcon} style={{ width: 40, height: 40 }} />
+            </Marker>
           )}
-        />
-      </View>
-
-      {/* Destination Input */}
-      <View style={styles.inputWrapper(isDestinationExpanded)}>
-        <GooglePlacesAutocomplete
-          placeholder="Where?"
-          onPress={(data, details = null) => {
-            setDestination({
-              latitude: details.geometry.location.lat,
-              longitude: details.geometry.location.lng,
-            });
-            setIsDestinationExpanded(false); // Collapse when selection is made
-          }}
-          textInputProps={{
-            onFocus: () => setIsDestinationExpanded(true), // Expand when focused
-            onBlur: () => setIsDestinationExpanded(false), // Collapse when unfocused
-            autoFocus: false,
-            style: styles.inputStyles,
-            placeholderTextColor: 'black', // <-- Set placeholder color
-
-          }}
-          query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
-          fetchDetails={true}
-          renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
-          renderRightButton={() => (
-            <Pressable>
-              <Flex center middle overrideStyle={styles.svgGps}>
-                <SvgGps fill={PRIMARY} />
-              </Flex>
-            </Pressable>
+          
+          {destination && (
+            <Marker coordinate={destination} title="Drop Location">
+              <Image source={carIcon} style={{ width: 50, height: 50 }} />
+            </Marker>
           )}
-        />
+          
+          {origin && destination && (
+            <MapViewDirections
+              origin={origin}
+              destination={destination}
+              apikey={GOOGLE_MAPS_APIKEY}
+              strokeWidth={1.4}
+              strokeColor="black"
+              onReady={(result) => {
+                mapRef.current.fitToCoordinates(result.coordinates, {
+                  edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+                });
+              }}
+            />
+          )}
+        </MapView>
+
+        <TouchableOpacity style={styles.touch} activeOpacity={0.8}>
+          <LinearGradient
+            colors={['#F6EFA6', '#B8A224']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.button}
+          >
+            <Text style={styles.text}>Pickup within 10 minutes?</Text>
+            <SvgRightArrow width={12} height={12} fill="black" />
+          </LinearGradient>
+        </TouchableOpacity>
+
+        <View style={{height: height * 0.10}}>
+          <FlatList
+            data={carOptions}
+            horizontal
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[
+                  styles.carOption,
+                  selectedCar === item.id && styles.selectedCar,
+                ]}
+                onPress={() => {
+                  setSelectedCar(item.id);
+                  console.log(item.id);
+                }}
+              >
+                <Image source={item.image} style={styles.carImage} />
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.carSelection}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+
+        {/* Current Location Input */}
+             <View style={styles.inputWrapper(isOriginExpanded)}>
+          <Image source={require('../assets/live.png')} style={styles.imageStyle} />
+          <GooglePlacesAutocomplete
+            placeholder="Current Location"
+            onPress={(data, details = null) => {
+              setOrigin({
+                latitude: details.geometry.location.lat,
+                longitude: details.geometry.location.lng,
+              });
+              setIsOriginExpanded(false); // Collapse when selection is made
+            }}
+            textInputProps={{
+              onFocus: () => setIsOriginExpanded(true), // Expand when focused
+              onBlur: () => setIsOriginExpanded(false), // Collapse when unfocused
+              autoFocus: false,
+              style: styles.inputStyles,
+              placeholderTextColor: 'black',
+            }}
+            query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
+            fetchDetails={true}
+            renderRow={(data) => <Text style={{ color: 'black' }}>{data.description}</Text>}
+            renderRightButton={() => (
+              <Pressable>
+                <Flex center middle overrideStyle={styles.svgGps}>
+                  <SvgGps fill={PRIMARY} />
+                </Flex>
+              </Pressable>
+            )}
+          />
+        </View>
         
-      </View>
-  
-      <View style={styles.switchContainer}>
-  <Text style={[styles.label, isEnabled && styles.labelActive]}>
-    Add request amount
-  </Text>
-  <Switch
-    value={isEnabled}
-    onValueChange={(val) => setIsEnabled(val)}
-    disabled={false}
-    activeText={''}
-    inActiveText={''}
-    circleSize={20}
-    barHeight={25}
-    circleBorderWidth={0}
-    backgroundActive={'#4cd137'}
-    backgroundInactive={'#dcdde1'}
-    circleActiveColor={'#fff'}
-    circleInActiveColor={'#fff'}
-    changeValueImmediately={true}
-    innerCircleStyle={{ alignItems: 'center', justifyContent: 'center' }}
-    renderInsideCircle={() => null} // Custom inside content
-    switchLeftPx={3} 
-    switchRightPx={3} 
-    switchWidthMultiplier={2}
-  />
+        
+           
+        <View style={styles.lineContainer}>
+  <Image source={require('../assets/Line1.png')} style={styles.imageStyle1} />
 </View>
-  
-<View style={styles.switchContainer}>
-  <Text style={[styles.label, isEnabled && styles.labelActive]}>
-    Lady drivers Only
-  </Text>
-  <Switch
-    value={isEnabled}
-    onValueChange={(val) => setIsEnabled(val)}
-    disabled={false}
-    activeText={''}
-    inActiveText={''}
-    circleSize={20}
-    barHeight={25}
-    circleBorderWidth={0}
-    backgroundActive={'#4cd137'}
-    backgroundInactive={'#dcdde1'}
-    circleActiveColor={'#fff'}
-    circleInActiveColor={'#fff'}
-    changeValueImmediately={true}
-    innerCircleStyle={{ alignItems: 'center', justifyContent: 'center' }}
-    renderInsideCircle={() => null} // Custom inside content
-    switchLeftPx={3} 
-    switchRightPx={3} 
-    switchWidthMultiplier={2}
-  />
-</View>
-{/* <TouchableOpacity style={styles.continuebutton} onPress={()=>navigation.navigate("OTPVerificationScreen")} activeOpacity={0.8}>
-      <Text style={styles.text}>Continue</Text>
-    </TouchableOpacity> */}
+          <View style={styles.inputWrapper(isDestinationExpanded)}>
+          <Image source={require('../assets/locationicon.png')} style={styles.imageStyle} />
+        
+                <GooglePlacesAutocomplete
+                  placeholder="Where?"
+                  onPress={(data, details = null) => {
+                    setDestination({
+                      latitude: details.geometry.location.lat,
+                      longitude: details.geometry.location.lng,
+                    });
+                    setIsDestinationExpanded(false); // Collapse when selection is made
+                  }}
+                  textInputProps={{
+                    onFocus: () => setIsDestinationExpanded(true), // Expand when focused
+                    onBlur: () => setIsDestinationExpanded(false), // Collapse when unfocused
+                    autoFocus: false,
+                    style: styles.inputStyles,
+                    placeholderTextColor:'black'
+                  }}
+                  query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
+                  fetchDetails={true}
+                  renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
+                  renderRightButton={() => (
+                    <Pressable>
+                      <Flex center middle overrideStyle={styles.svgGps}>
+                        <SvgGps fill={PRIMARY} />
+                      </Flex>
+                    </Pressable>
+                  )}
+                />
+                
+              </View>
+   
+        
+        <View style={styles.switchContainer}>
+          <Text style={[styles.label, isAmountEnabled && styles.labelActive]}>
+            Add request amount
+          </Text>
+          <Switch
+            value={isAmountEnabled}
+            onValueChange={(val) => setIsAmountEnabled(val)}
+            disabled={false}
+            activeText={''}
+            inActiveText={''}
+            circleSize={20}
+            barHeight={25}
+            circleBorderWidth={0}
+            backgroundActive={'#4cd137'}
+            backgroundInactive={'#dcdde1'}
+            circleActiveColor={'#fff'}
+            circleInActiveColor={'#fff'}
+            changeValueImmediately={true}
+            innerCircleStyle={{ alignItems: 'center', justifyContent: 'center' }}
+            renderInsideCircle={() => null}
+            switchLeftPx={3} 
+            switchRightPx={3} 
+            switchWidthMultiplier={2}
+          />
+        </View>
+        
+        <View style={styles.switchContainer}>
+          <Text style={[styles.label, isLadyDriverEnabled && styles.labelActive]}>
+            Lady drivers Only
+          </Text>
+          <Switch
+            value={isLadyDriverEnabled}
+            onValueChange={(val) => setIsLadyDriverEnabled(val)}
+            disabled={false}
+            activeText={''}
+            inActiveText={''}
+            circleSize={20}
+            barHeight={25}
+            circleBorderWidth={0}
+            backgroundActive={'#4cd137'}
+            backgroundInactive={'#dcdde1'}
+            circleActiveColor={'#fff'}
+            circleInActiveColor={'#fff'}
+            changeValueImmediately={true}
+            innerCircleStyle={{ alignItems: 'center', justifyContent: 'center' }}
+            renderInsideCircle={() => null}
+            switchLeftPx={3} 
+            switchRightPx={3} 
+            switchWidthMultiplier={2}
+          />
+        </View>
 
-  <Button onClick={()=>navigation.navigate("OTPVerificationScreen")} width={120} >
-              Continue
-            </Button>
+        <Button onClick={() => navigation.navigate("OTPVerificationScreen")} width={120}>
+          Continue
+        </Button>
+        
+        {/* Add some padding at the bottom for better scrolling */}
+        <View style={{ height: 50 }} />
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -261,16 +332,38 @@ export default Index;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
+  },
+  scrollContainer: {
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#FFFFF',
+    paddingBottom: 20,
+  },
+  lineContainer: {
+    alignSelf: 'flex-start',
+    marginLeft: width * 0.07,
+    marginBottom: 0,
+  },
+  imageStyle1: {
+    height: height * 0.00, // 2% of screen height
+    resizeMode: 'contain', // or whatever width works for your design
+  },
+  imageStyle: {
+
+    width: 24, // Adjust size as needed
+    height: 24,
+    marginRight: 10, // Adds spacing between image and input field
+    resizeMode: 'contain',
   },
   button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#E8D66A',
     borderRadius: 10,
     paddingVertical: 12,
-    top:10,
-    color:'#E8D66A',
+    paddingHorizontal: 20,
+    top: 10,
     width: '100%',
   },
   mapBox: {
@@ -283,12 +376,30 @@ const styles = StyleSheet.create({
     borderColor: '#333',
   },
   inputWrapper: (isExpanded) => ({
-    width: INPUT_WIDTH,
-    marginTop: 30,
-    height: isExpanded ? 180 : 40, // Adjust height dynamically
+    // width: INPUT_WIDTH,
+    // marginTop: 30,
+    // height: isExpanded ? 180 : 40,
+    flexDirection: 'row', // Ensures items are placed in a row
+    alignItems: 'center', // Aligns items vertically
+    backgroundColor: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 0,
+
+    paddingVertical: isExpanded ? 10 : 5,
+    //width: '100%',
+    //elevation: 3,
+      width: INPUT_WIDTH,
+      marginTop: 30,
+  
+      height: isExpanded ? 180 : 40,
   }),
+  imageStyle1:{
+    marginRight: -301,
+    height:30 // Adds spacing between image and input field
+  
+  },
   inputStyles: {
-    width: INPUT_WIDTH,
+    width: width * 0.81,
     height: INPUT_HEIGHT,
     borderWidth: 1,
     borderColor: BORDER_COLOR,
@@ -311,14 +422,13 @@ const styles = StyleSheet.create({
     width: INPUT_WIDTH,
     marginVertical: 10,
   },
-
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: width * 0.85, // Responsive width
+    width: width * 0.85,
     paddingVertical: 10,
-    marginTop: 20, // Adjusted margin
+    marginTop: 20,
   },
   label: {
     fontSize: 14,
@@ -328,62 +438,31 @@ const styles = StyleSheet.create({
   labelActive: {
     color: '#000',
   },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-  },
   text: {
     color: '#000',
     fontSize: 14,
     fontWeight: 'bold',
   },
-  continuebutton: {
-    width: width * 0.9,  // 90% of screen width
-    height: width * 0.12, // Proportional height
-    backgroundColor: '#E8D66A', // Exact yellow shade
-    borderRadius: width * 0.1, // Rounded corners
-    justifyContent: 'center',
-    alignItems: 'center',
-    top:40
+  carSelection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 5,
   },
-  text: {
-    color: '#000', // Black text
-    fontSize: width * 0.04, // Responsive font size
-    fontWeight: 'bold',
-  },
-
-
-
-
-
-  flatlistcontainer: {
-    justifyContent: "center",
+  carOption: {
+    width: 80, 
+    height: 70, 
     alignItems: "center",
-   
+    backgroundColor: "white",
+    padding: width * 0.02,
+    borderRadius: 10,
   },
-  item: {
-    backgroundColor: "#f5f5f5",
-    alignItems: "center",
-    margin: 5,
+  selectedCar: {
+    backgroundColor: "#E8D66A",
   },
-  image: {
-    width: 60,
-    height: 60,
+  carImage: {
+    width: width * 0.18,
+    height: width * 0.1,
     resizeMode: "contain",
-  },
-  flattext: {
-    marginTop: 5,
-    fontSize: 10,
-    fontWeight: "bold",
   },
   backButton: {
     position: 'absolute',

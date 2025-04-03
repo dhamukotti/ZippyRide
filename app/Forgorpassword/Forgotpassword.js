@@ -120,7 +120,7 @@ const Forgotpassword = () => {
   return (
     <ImageBackground
      // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      source={require('../assets/frame.png')}
+      source={require('../assets/frame.jpeg')}
      style={styles.container}
     >
       <Toast   config={toastConfig} ref={(ref) => Toast.setRef(ref)} position="top" />

@@ -166,7 +166,7 @@ const handleSubmit = async () => {
   //const maskEmail = (email) => email.replace(/^(.{2}).*(@)/, "$1**$2");
   return (
     <ImageBackground 
-    source={require('../assets/frame.png')}
+    source={require('../assets/frame.jpeg')}
      style={styles.container} >
        {isLoading && <Loader />}
      

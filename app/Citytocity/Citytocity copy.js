@@ -193,7 +193,7 @@ const Citytocity = () => {
 
         </View>
         <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={()=> navigation.navigate('RiderVerificationScreen')} style={styles.continueButton}>
+                <TouchableOpacity style={styles.continueButton}>
                     <Text style={styles.continueText}>Continue</Text>
                 </TouchableOpacity>
                
