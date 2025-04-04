@@ -38,6 +38,8 @@ const Stack = createNativeStackNavigator();
 import RiderVerificationScreen from './app/BookingSuccess/RiderVerificationScreen';
 // Home Screen Component
 import PaymentScreen from './app/BookingSuccess/PaymentScreen';
+import Ridesuccess from './app/BookingSuccess/Ridesuccess';
+import Historyofride from './app/BookingSuccess/Historyofride';
 function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -104,6 +106,8 @@ export default function App() {
 <Stack.Screen name="RiderVerificationScreen"   options={{ headerShown: false }} component={RiderVerificationScreen} />
 
 <Stack.Screen name="PaymentScreen"   options={{ headerShown: false }} component={PaymentScreen} />
+<Stack.Screen name="Ridesuccess"   options={{ headerShown: false }} component={Ridesuccess} />
+<Stack.Screen name="Historyofride"   options={{ headerShown: false }} component={Historyofride} />
 
 
         <Stack.Screen name="Places"   options={{ headerShown: false }} component={Places} />

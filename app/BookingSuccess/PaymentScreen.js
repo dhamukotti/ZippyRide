@@ -38,7 +38,9 @@ const PaymentScreen = () => {
       </View>
 
       {/* Pay at Drop Button */}
-      <TouchableOpacity style={styles.payAtDropButton}>
+      <TouchableOpacity
+      onPress={()=>navigation.navigate('Ridesuccess')}
+       style={styles.payAtDropButton}>
         <Text style={styles.payAtDropText}>Pay at Drop</Text>
       </TouchableOpacity>
     </View>
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
   subHeader: {
     fontSize: 15,
     color: "black",
-    marginTop:height*0.08,
+    marginTop:height*0.09,
 
     marginBottom: height * 0.03,
   },
@@ -90,8 +92,9 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.03,
   },
   amountText: {
-    fontSize: width * 0.045,
+    fontSize:15,
     fontWeight: "bold",
+    color:'black'
   },
   paymentOptions: {
     borderTopWidth: 1,
@@ -102,6 +105,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: height * 0.015,
     borderBottomWidth: 1,
+    color:'black',
     borderColor: "#ccc",
   },
   paymentIcon: {
@@ -111,13 +115,15 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   paymentText: {
-    fontSize: width * 0.04,
+    fontSize: 14,
     fontWeight: "500",
+    color:'black'
   },
   orContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    marginTop:height*0.10,
     marginVertical: height * 0.03,
   },
   line: {
@@ -135,11 +141,13 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     paddingVertical: height * 0.015,
     borderRadius: width * 0.02,
+    marginTop:height*0.08,
     alignItems: "center",
   },
   payAtDropText: {
-    fontSize: width * 0.045,
+    fontSize: 17,
     fontWeight: "bold",
+    color:'black'
   },
 });
 
