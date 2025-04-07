@@ -40,6 +40,7 @@ import RiderVerificationScreen from './app/BookingSuccess/RiderVerificationScree
 import PaymentScreen from './app/BookingSuccess/PaymentScreen';
 import Ridesuccess from './app/BookingSuccess/Ridesuccess';
 import Historyofride from './app/BookingSuccess/Historyofride';
+import ProfileScreen from './app/Profile/ProfileScreen';
 function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -109,6 +110,7 @@ export default function App() {
 <Stack.Screen name="Ridesuccess"   options={{ headerShown: false }} component={Ridesuccess} />
 <Stack.Screen name="Historyofride"   options={{ headerShown: false }} component={Historyofride} />
 
+<Stack.Screen name="ProfileScreen"   options={{ headerShown: false }} component={ProfileScreen} />
 
         <Stack.Screen name="Places"   options={{ headerShown: false }} component={Places} />
         <Stack.Screen name="Register"   options={{ headerShown: false }} component={Register} />

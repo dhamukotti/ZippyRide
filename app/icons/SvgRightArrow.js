@@ -4,7 +4,7 @@ import Svg, {Path} from 'react-native-svg';
 const defaultProps = {
   width: 12,
   height: 14,
-  fill: '#E59722',
+  fill: '#F1EED4',
   style: {},
 };
 

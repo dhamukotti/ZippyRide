@@ -14,6 +14,7 @@ import {
 import { SvgXml } from 'react-native-svg';
 import ExactRideCard from './RIdeCard';
 const { width, height } = Dimensions.get('window');
+import { Rating } from 'react-native-ratings';
 
 // SVG for back icon
 const backIconSvg = `
@@ -49,39 +50,43 @@ const RideHistoryScreen = ({ navigation }) => {
 
   // Previous rides data
   const previousRides = [
-    { id: '1', driver: 'Ashik', time: 'Today 07.45 PM', location: 'Pallavaram to Guindy', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '2', driver: 'Matkii', time: 'Today 02.25 PM', location: 'Villivakkam to Parris Corner', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '3', driver: 'Bala', time: 'Yesterday 06.00 PM', location: 'Porur to Ramapuram', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '4', driver: 'Selva', time: 'Yesterday 11.30 AM', location: 'Urupakkam to Potheri', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '5', driver: 'Askar', time: 'Yesterday 09.10 AM', location: 'Saidapet to Periyamet', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '6', driver: 'Ravi', time: 'Yesterday 08.45 PM', location: 'T Nagar to Mylapore', price: '280.00', vehicleType: 'SEDAN' },
-    { id: '7', driver: 'Manoj', time: 'Yesterday 04.30 PM', location: 'Tambaram to Velachery', price: '300.00', vehicleType: 'SUV' },
-    { id: '8', driver: 'Kumar', time: 'Yesterday 10.20 AM', location: 'Medavakkam to Perungudi', price: '250.00', vehicleType: 'HATCHBACK' },
-    { id: '9', driver: 'Suresh', time: 'Yesterday 12.00 PM', location: 'Adyar to Thiruvanmiyur', price: '270.00', vehicleType: 'SEDAN' },
-    { id: '10', driver: 'Vimal', time: 'Yesterday 03.15 PM', location: 'Nungambakkam to Egmore', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '11', driver: 'Ramesh', time: '2 Days Ago 09.00 PM', location: 'Kodambakkam to Teynampet', price: '280.00', vehicleType: 'SEDAN' },
-    { id: '12', driver: 'Sathish', time: '2 Days Ago 06.45 PM', location: 'Perambur to Parrys', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '13', driver: 'Hari', time: '2 Days Ago 02.10 PM', location: 'Guindy to Thoraipakkam', price: '290.00', vehicleType: 'SUV' },
-    { id: '14', driver: 'Vinod', time: '2 Days Ago 07.55 AM', location: 'Royapettah to Marina', price: '230.00', vehicleType: 'HATCHBACK' },
-    { id: '15', driver: 'Arun', time: '3 Days Ago 11.00 PM', location: 'Mambalam to Saidapet', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '16', driver: 'Dinesh', time: '3 Days Ago 09.20 AM', location: 'Washermanpet to Broadway', price: '250.00', vehicleType: 'SEDAN' },
-    { id: '17', driver: 'Muthu', time: '3 Days Ago 04.40 PM', location: 'Purasaiwalkam to Kilpauk', price: '270.00', vehicleType: 'SUV' },
-    { id: '18', driver: 'Saravanan', time: '3 Days Ago 08.15 AM', location: 'Chetpet to Egmore', price: '240.00', vehicleType: 'HATCHBACK' },
-    { id: '19', driver: 'Prakash', time: '4 Days Ago 10.50 AM', location: 'Velachery to Taramani', price: '280.00', vehicleType: 'SEDAN' },
-    { id: '20', driver: 'Gopi', time: '4 Days Ago 03.30 PM', location: 'Ambattur to Avadi', price: '290.00', vehicleType: 'SUV' },
-    { id: '21', driver: 'Balaji', time: '5 Days Ago 07.25 PM', location: 'Chromepet to Pallikaranai', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '22', driver: 'Ajay', time: '5 Days Ago 06.10 AM', location: 'Anna Nagar to Shenoy Nagar', price: '250.00', vehicleType: 'SEDAN' },
-    { id: '23', driver: 'Siva', time: '6 Days Ago 12.40 PM', location: 'Vadapalani to Arumbakkam', price: '270.00', vehicleType: 'SUV' },
-    { id: '24', driver: 'Karthik', time: '6 Days Ago 05.20 PM', location: 'Nandanam to Alwarpet', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '25', driver: 'Deepak', time: '6 Days Ago 09.50 AM', location: 'Mount Road to Nandanam', price: '280.00', vehicleType: 'SEDAN' },
-    { id: '26', driver: 'Vijay', time: '7 Days Ago 02.30 PM', location: 'Teynampet to Royapettah', price: '260.00', vehicleType: 'HATCHBACK' },
-    { id: '27', driver: 'Lokesh', time: '7 Days Ago 07.10 PM', location: 'Marina Beach to Triplicane', price: '240.00', vehicleType: 'HATCHBACK' },
-    { id: '28', driver: 'Sundar', time: '8 Days Ago 11.45 AM', location: 'Egmore to Choolai', price: '270.00', vehicleType: 'SEDAN' },
-    { id: '29', driver: 'Mohan', time: '8 Days Ago 04.50 PM', location: 'Parrys to Broadway', price: '250.00', vehicleType: 'SUV' },
-    { id: '30', driver: 'Vasanth', time: '9 Days Ago 08.05 PM', location: 'Aminjikarai to Nungambakkam', price: '260.00', vehicleType: 'HATCHBACK' },
-];
+    { id: '1', driver: 'Ashik', time: 'Today 07.45 PM', fromLocation: 'Pallavaram', toLocation: 'Guindy', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '2', driver: 'Matkii', time: 'Today 02.25 PM', fromLocation: 'Villivakkam', toLocation: 'Parris Corner', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '3', driver: 'Bala', time: 'Yesterday 06.00 PM', fromLocation: 'Porur', toLocation: 'Ramapuram', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '4', driver: 'Selva', time: 'Yesterday 11.30 AM', fromLocation: 'Urupakkam', toLocation: 'Potheri', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '5', driver: 'Askar', time: 'Yesterday 09.10 AM', fromLocation: 'Saidapet', toLocation: 'Periyamet', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '6', driver: 'Ravi', time: 'Yesterday 08.45 PM', fromLocation: 'T Nagar', toLocation: 'Mylapore', price: '280.00', vehicleType: 'SEDAN' },
+    { id: '7', driver: 'Manoj', time: 'Yesterday 04.30 PM', fromLocation: 'Tambaram', toLocation: 'Velachery', price: '300.00', vehicleType: 'SUV' },
+    { id: '8', driver: 'Kumar', time: 'Yesterday 10.20 AM', fromLocation: 'Medavakkam', toLocation: 'Perungudi', price: '250.00', vehicleType: 'HATCHBACK' },
+    { id: '9', driver: 'Suresh', time: 'Yesterday 12.00 PM', fromLocation: 'Adyar', toLocation: 'Thiruvanmiyur', price: '270.00', vehicleType: 'SEDAN' },
+    { id: '10', driver: 'Vimal', time: 'Yesterday 03.15 PM', fromLocation: 'Nungambakkam', toLocation: 'Egmore', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '11', driver: 'Ramesh', time: '2 Days Ago 09.00 PM', fromLocation: 'Kodambakkam', toLocation: 'Teynampet', price: '280.00', vehicleType: 'SEDAN' },
+    { id: '12', driver: 'Sathish', time: '2 Days Ago 06.45 PM', fromLocation: 'Perambur', toLocation: 'Parrys', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '13', driver: 'Hari', time: '2 Days Ago 02.10 PM', fromLocation: 'Guindy', toLocation: 'Thoraipakkam', price: '290.00', vehicleType: 'SUV' },
+    { id: '14', driver: 'Vinod', time: '2 Days Ago 07.55 AM', fromLocation: 'Royapettah', toLocation: 'Marina', price: '230.00', vehicleType: 'HATCHBACK' },
+    { id: '15', driver: 'Arun', time: '3 Days Ago 11.00 PM', fromLocation: 'Mambalam', toLocation: 'Saidapet', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '16', driver: 'Dinesh', time: '3 Days Ago 09.20 AM', fromLocation: 'Washermanpet', toLocation: 'Broadway', price: '250.00', vehicleType: 'SEDAN' },
+    { id: '17', driver: 'Muthu', time: '3 Days Ago 04.40 PM', fromLocation: 'Purasaiwalkam', toLocation: 'Kilpauk', price: '270.00', vehicleType: 'SUV' },
+    { id: '18', driver: 'Saravanan', time: '3 Days Ago 08.15 AM', fromLocation: 'Chetpet', toLocation: 'Egmore', price: '240.00', vehicleType: 'HATCHBACK' },
+    { id: '19', driver: 'Prakash', time: '4 Days Ago 10.50 AM', fromLocation: 'Velachery', toLocation: 'Taramani', price: '280.00', vehicleType: 'SEDAN' },
+    { id: '20', driver: 'Gopi', time: '4 Days Ago 03.30 PM', fromLocation: 'Ambattur', toLocation: 'Avadi', price: '290.00', vehicleType: 'SUV' },
+    { id: '21', driver: 'Balaji', time: '5 Days Ago 07.25 PM', fromLocation: 'Chromepet', toLocation: 'Pallikaranai', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '22', driver: 'Ajay', time: '5 Days Ago 06.10 AM', fromLocation: 'Anna Nagar', toLocation: 'Shenoy Nagar', price: '250.00', vehicleType: 'SEDAN' },
+    { id: '23', driver: 'Siva', time: '6 Days Ago 12.40 PM', fromLocation: 'Vadapalani', toLocation: 'Arumbakkam', price: '270.00', vehicleType: 'SUV' },
+    { id: '24', driver: 'Karthik', time: '6 Days Ago 05.20 PM', fromLocation: 'Nandanam', toLocation: 'Alwarpet', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '25', driver: 'Deepak', time: '6 Days Ago 09.50 AM', fromLocation: 'Mount Road', toLocation: 'Nandanam', price: '280.00', vehicleType: 'SEDAN' },
+    { id: '26', driver: 'Vijay', time: '7 Days Ago 02.30 PM', fromLocation: 'Teynampet', toLocation: 'Royapettah', price: '260.00', vehicleType: 'HATCHBACK' },
+    { id: '27', driver: 'Lokesh', time: '7 Days Ago 07.10 PM', fromLocation: 'Marina Beach', toLocation: 'Triplicane', price: '240.00', vehicleType: 'HATCHBACK' },
+    { id: '28', driver: 'Sundar', time: '8 Days Ago 11.45 AM', fromLocation: 'Egmore', toLocation: 'Choolai', price: '270.00', vehicleType: 'SEDAN' },
+    { id: '29', driver: 'Mohan', time: '8 Days Ago 04.50 PM', fromLocation: 'Parrys', toLocation: 'Broadway', price: '250.00', vehicleType: 'SUV' },
+    { id: '30', driver: 'Vasanth', time: '9 Days Ago 08.05 PM', fromLocation: 'Aminjikarai', toLocation: 'Nungambakkam', price: '260.00', vehicleType: 'HATCHBACK' },
+  ];
+  
 
-
+  const handleRating = value => {
+  
+    console.log('Selected Rating:', value);
+  };
   // Filter rides based on active tab
   const filteredRides = () => {
     switch(activeTab) {
@@ -232,20 +237,93 @@ const RideHistoryScreen = ({ navigation }) => {
           <FlatList
             data={filteredRides()}
             keyExtractor={(item) => item.id}
-            scrollEnabled={false}
+            scrollEnabled={true}
             renderItem={({ item }) => (
                 <ScrollView 
                 style={{ flex: 1 }} nestedScrollEnabled={true}>
 
               <View style={styles.rideItem}>
                 <View style={styles.rideItemLeft}>
-                  <Text style={styles.rideDriver}>{item.driver}</Text>
-                  <Text style={styles.rideTime}>{item.time}</Text>
-                  <Text style={styles.rideLocation}>{item.location}</Text>
+                <Image
+      source={require('../assets/usericon.png')}
+      style={{
+        height: 30,
+        width: 30,
+       
+      }}
+    />
+<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+ 
+  <Text style={[styles.rideDriver, { marginLeft: 8 }]}>
+    {item.driver}{' '}
+   
+  </Text>
+  <Image
+    source={require('../assets/Vector.png')}
+    style={{
+      height: 20,
+      width: 20,
+      resizeMode: 'contain',
+    }}
+  />
+ 
+</View>
+<View style={{alignSelf:'flex-start'}}>
+    <Rating
+                type="star"
+                ratingCount={5}
+                imageSize={20}
+                showRating={false}
+                fractions={1}
+                onFinishRating={handleRating}
+              />
+              </View>
+<Text style={styles.rideTime}>{item.time}</Text>
+
+                  <View style={{flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
+  <View style={{  alignItems: 'center' }}>
+    <Image
+      source={require('../assets/human.jpg')}
+      style={{
+        height: 20,
+        width: 20,
+        resizeMode: 'contain',
+      }}
+    />
+  </View>
+  <Text style={{ color: 'black', marginLeft: 8, flexShrink: 1 }}>
+    {item.fromLocation}
+  </Text>
+</View>
+
+<View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
+  <View style={{ width: 25, alignItems: 'center', marginTop: height * 0.01 }}>
+    <Image
+      source={require('../assets/locationicon.png')}
+      style={{
+        height: 20,
+        width: 20,
+        resizeMode: 'contain',
+      }}
+    />
+  </View>
+  <Text
+    style={{
+      color: 'black',
+      marginLeft: 8,
+      marginTop: height * 0.01,
+      flexShrink: 1,
+    }}>
+    {item.fromLocation}
+  </Text>
+</View>
+
+
+
                 </View>
                 <View style={styles.rideItemRight}>
                   <Text style={styles.ridePrice}>₹{item.price}</Text>
-                  <Text style={styles.rideVehicleType}>{item.vehicleType}</Text>
+                  <Image source={require('../assets/hatchback.png')} style={{width:60,height:50}} />
                 </View>
               </View>
               </ScrollView>
@@ -516,13 +594,17 @@ const styles = StyleSheet.create({
   },
   rideTime: {
     fontSize: width * 0.033,
-    color: '#666',
+    color: 'black',
+    fontWeight:'bold',
+    textAlign:'center',
+    
     marginBottom: height * 0.005,
   },
-  rideLocation: {
-    fontSize: width * 0.033,
-    color: '#666',
-  },
+  // rideLocation: {
+  //   fontSize: width * 0.033,
+  //   textAlign:'center',
+  //   color: '#666',
+  // },
   ridePrice: {
     fontSize: width * 0.038,
     fontWeight: 'bold',

@@ -299,7 +299,7 @@ async function handleEnabledPressed() {
 
       {/* Skip */}
       <View style={styles.spacer} />
-      <TouchableOpacity onPress={()=>navigation.navigate('Historyofride')}>
+      <TouchableOpacity onPress={()=>navigation.navigate('ProfileScreen')}>
         <Text style={styles.skipText}>SKIP</Text>
       </TouchableOpacity>
     </ImageBackground>
