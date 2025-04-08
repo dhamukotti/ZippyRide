@@ -16,7 +16,6 @@ import { Switch } from 'react-native-switch';
 import {PERMISSIONS, request} from 'react-native-permissions';
 import SvgBack from '../icons/SvgBack';
 import { useNavigation } from '@react-navigation/native';
-
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import React, { useState, useRef, useEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
@@ -24,19 +23,30 @@ import { API_KEY } from '../uikit/UikitUtils/constants';
 import Button from '../uikit/Button/Button';
 import SvgRightArrow from '../icons/SvgRightArrow';
 import SvgGps from '../icons/SvgGps';
-
+import axios from 'axios';
 import { BLACK, BORDER_COLOR, PRIMARY } from '../uikit/UikitUtils/colors';
 import { inputTextStyles } from '../uikit/InputText/InputTextStyles';
 import Flex from '../uikit/Flex/Flex';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
 import 'react-native-get-random-values';
+import 'react-native-url-polyfill/auto'; // Important!
+import Loader from '../uikit/Loader/Loader';
+
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+
+const signalRUrl = 'https://uat.zippyrideuserapi.projectpulse360.com/riderhub';
+
+
+
 
 const { width, height } = Dimensions.get('window');
 const userIcon = require('../assets/human.jpg');
 const carIcon = require('../assets/car-white.png'); 
+const vechil = require('../assets/vechial.png'); 
+
 const BOX_WIDTH = width * 0.9;
-const BOX_HEIGHT = height * 0.3;
+const BOX_HEIGHT = height * 0.4;
 const MARGIN_TOP = height * 0.03;
 const INPUT_WIDTH = width * 0.91;
 const INPUT_HEIGHT = height * 0.05;
@@ -53,6 +63,7 @@ const Index = () => {
   const [isLadyDriverEnabled, setIsLadyDriverEnabled] = useState(false);
   const [selectedCar, setSelectedCar] = useState('');
   const scrollViewRef = useRef(null);
+  const [riders, setRiders] = useState([]);
 
   const carOptions = [
     { id: "1", type: "EV", image: require("../assets/ev.png") },
@@ -85,8 +96,56 @@ const Index = () => {
     }
   }
 
+  const [userLocation, setUserLocation] = useState({ lat: 12.787926, lng: 79.662123 });
+  const [showFemaleOnly, setShowFemaleOnly] = useState(false);
+  const [rangeFilter, setRangeFilter] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const signalRUrl = 'https://uat.zippyrideuserapi.projectpulse360.com/riderhub';
+  const socketUrl = 'wss://www.uat.zippyrideuserapi.projectpulse360.com/riderhub'; 
+  const [socket, setSocket] = useState(null);
+  useEffect(() => {
+    const connection = new HubConnectionBuilder()
+      .withUrl(signalRUrl)
+      .configureLogging(LogLevel.Information)
+      .withAutomaticReconnect()
+      .build();
+
+    const startConnection = async () => {
+      setIsLoading(true)
+      try {
+        await connection.start();
+        console.log('✅ SignalR Connected');
+
+        // Server calling this? You need this listener
+        connection.on('locationupdated', (data) => {
+          console.log('📍 Location updated by server:', data);
+          setRiders(data)
+    
+        });
+
+        connection.on('ReceiveNearestRiders', (riders) => {
+          console.log('📥 Nearest riders:', riders);
+        });
+
+        // Sample method if 'GetNearestRiders' isn't defined:
+        await connection.invoke('UpdateLocation', 12.787926, 79.662123 , false, 10);
+
+      } catch (err) {
+        console.error('❌ SignalR Connection Error:', err);
+      }
+      setIsLoading(false)
+    };
+
+    startConnection();
+
+    return () => {
+      connection.stop();
+    };
+  }, []);
+
   // Handle keyboard appearance to scroll to inputs
   useEffect(() => {
+    // getriders()
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       (e) => {
@@ -104,12 +163,26 @@ const Index = () => {
       keyboardDidShowListener.remove();
     };
   }, [isOriginExpanded, isDestinationExpanded]);
+  const currentLocation = {
+    latitude: 12.787926,
+    longitude:79.662123
+  };
+
+  const getriders = async () =>{
+    const value = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/riders/nearby?latitude=${12.787926}&longitude=${79.662123}&radius=${10}`)
+    .then((res)=>{
+     //   setRiders(res.data)
+     
+    })
+}
+
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+        {isLoading && <Loader />}
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={styles.scrollContainer}
@@ -123,17 +196,46 @@ const Index = () => {
           ref={mapRef}
           style={styles.mapBox}
           initialRegion={{
-            latitude: 13.0827,
-            longitude: 80.2707,
+            latitude: 12.787926,
+            longitude:  79.662123,
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           }}
         >
-          {origin && (
+         
+    {/* <Marker title="Current Location">
+      <View style={styles.blueDotWrapper}>
+        <View style={styles.blueDot} />
+      </View>
+    </Marker>
+   */}
+   {currentLocation && (
+  <Marker coordinate={currentLocation} title="Current Location">
+    <View style={styles.blueDotWrapper}>
+      <View style={styles.blueDot} />
+    </View>
+  </Marker>
+)}
+    {riders.map((rider) => (
+  <Marker
+    key={rider.riderId}
+    coordinate={{ latitude: rider.latitude, longitude: rider.longitude }}
+  >
+    {/* <View
+      style={[
+        styles.marker,
+        { backgroundColor: rider.isFemale ? 'pink' : 'green' }
+      ]}
+    /> */}
+                  <Image source={vechil} style={{ width: 30, height: 30 }} />
+
+  </Marker>
+))}
+         {origin && (
             <Marker coordinate={origin} title="Pickup Location">
               <Image source={userIcon} style={{ width: 40, height: 40 }} />
             </Marker>
-          )}
+          )} 
           
           {destination && (
             <Marker coordinate={destination} title="Drop Location">
@@ -348,6 +450,13 @@ const styles = StyleSheet.create({
     height: height * 0.00, // 2% of screen height
     resizeMode: 'contain', // or whatever width works for your design
   },
+  marker: {
+    width: 20,
+    height: 20,
+    borderRadius: 10, // Half of width/height for a perfect circle
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
   imageStyle: {
 
     width: 24, // Adjust size as needed
@@ -393,6 +502,26 @@ const styles = StyleSheet.create({
   
       height: isExpanded ? 180 : 40,
   }),
+  blueDotWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+  },
+  
+  blueDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#4285F4', // Google Maps blue
+    borderWidth: 3,
+    borderColor: '#ffffff',
+    shadowColor: '#4285F4',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 6,
+    elevation: 5, // for Android
+  },
   imageStyle1:{
     marginRight: -301,
     height:30 // Adds spacing between image and input field

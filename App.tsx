@@ -41,6 +41,11 @@ import PaymentScreen from './app/BookingSuccess/PaymentScreen';
 import Ridesuccess from './app/BookingSuccess/Ridesuccess';
 import Historyofride from './app/BookingSuccess/Historyofride';
 import ProfileScreen from './app/Profile/ProfileScreen';
+
+
+import Mapviwscrron from './app/Places/Mapview'
+
+
 function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -114,7 +119,9 @@ export default function App() {
 
         <Stack.Screen name="Places"   options={{ headerShown: false }} component={Places} />
         <Stack.Screen name="Register"   options={{ headerShown: false }} component={Register} />
+        <Stack.Screen name="Mapviwscrron"   options={{ headerShown: false }} component={Mapviwscrron} />
 
+        
         </Stack.Navigator>
       
       </NavigationContainer>

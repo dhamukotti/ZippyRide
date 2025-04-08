@@ -108,7 +108,7 @@ const menuItems = [
   { label: 'Settings',icon: require('../assets/iconamoon_settings-light.png'),screen:'Historyofride' },
   { label: 'Help', icon: require('../assets/material-symbols_help-clinic-outline-rounded.png'),screen:'Historyofride'},
   { label: 'Support', icon: require('../assets/ix_support.png'),screen:'Historyofride' },
-  { label: 'Terms and Condition', icon: require('../assets/iconoir_privacy-policy.png'),screen:'Historyofride' },
+  { label: 'Terms and Condition', icon: require('../assets/iconoir_privacy-policy.png'),screen:'Mapviwscrron' },
   { label: 'Book Your Trip', icon: require('../assets/fontisto_car.png'),screen:'Places'},
   { label: 'Logout', icon: require('../assets/hugeicons_logout-04.png'),screen:'Login' },
 ];

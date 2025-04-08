@@ -242,7 +242,7 @@ const RideHistoryScreen = ({ navigation }) => {
                 <ScrollView 
                 style={{ flex: 1 }} nestedScrollEnabled={true}>
 
-              <View style={styles.rideItem}>
+              {/* <View style={styles.rideItem}>
                 <View style={styles.rideItemLeft}>
                 <Image
       source={require('../assets/usericon.png')}
@@ -325,7 +325,91 @@ const RideHistoryScreen = ({ navigation }) => {
                   <Text style={styles.ridePrice}>₹{item.price}</Text>
                   <Image source={require('../assets/hatchback.png')} style={{width:60,height:50}} />
                 </View>
-              </View>
+              </View> */}
+              <View style={styles.rideItem}>
+  <View style={styles.rideItemLeft}>
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      {/* User icon and driver name */}
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Image
+          source={require('../assets/usericon.png')}
+          style={{
+            height: 30,
+            width: 30,
+          }}
+        />
+        <View style={{ flexDirection: 'row', alignSelf: 'center', marginLeft: 8 }}>
+          <Text style={styles.rideDriver}>
+            {item.driver}{' '}
+          </Text>
+          <Image
+            source={require('../assets/Vector.png')}
+            style={{
+              height: 20,
+              width: 20,
+              resizeMode: 'contain',
+            }}
+          />
+        </View>
+      </View>
+      
+      {/* Time - aligned to the right */}
+      <Text style={styles.rideTime }>{item.time}</Text>
+    </View>
+
+    {/* Rating */}
+    <View style={{ alignSelf: 'flex-start', marginTop: 5 }}>
+      <Rating
+        type="star"
+        ratingCount={5}
+        imageSize={20}
+        showRating={false}
+        fractions={1}
+        onFinishRating={handleRating}
+      />
+    </View>
+
+    {/* Locations */}
+    <View style={{ marginTop:-width*0.05,marginLeft:width*0.05 }}>
+      <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
+        <Image
+          source={require('../assets/human.jpg')}
+          style={{
+            height: 20,
+            width: 20,
+            resizeMode: 'contain',
+          }}
+        />
+        <Text style={{ color: 'black', marginLeft: 8 }}>
+          {item.fromLocation}
+        </Text>
+      </View>
+
+      <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 15 }}>
+        <Image
+          source={require('../assets/locationicon.png')}
+          style={{
+            height: 20,
+            width: 20,
+            resizeMode: 'contain',
+          }}
+        />
+        <Text style={{ color: 'black', marginLeft: 8 }}>
+          {item.toLocation}
+        </Text>
+      </View>
+    </View>
+  </View>
+  
+  {/* Price and car icon - aligned to the right */}
+  <View style={styles.rideItemRight}>
+    <Text style={styles.ridePrice}>₹{item.price}</Text>
+    <Image 
+      source={require('../assets/hatchback.png')} 
+      style={{ width: 60, height: 50 }} 
+    />
+  </View>
+</View>
               </ScrollView>
             )}
             ListEmptyComponent={
@@ -516,7 +600,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
     marginBottom: height * 0.005,
+  },  rideItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    // Add shadow or other styles as needed
   },
+
   eta: {
     fontSize: width * 0.035,
     color: '#666',
@@ -597,6 +690,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight:'bold',
     textAlign:'center',
+    marginLeft:width*0.05,
     
     marginBottom: height * 0.005,
   },
