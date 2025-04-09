@@ -17,7 +17,7 @@ import {PERMISSIONS, request} from 'react-native-permissions';
 import SvgBack from '../icons/SvgBack';
 import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { API_KEY } from '../uikit/UikitUtils/constants';
 import Button from '../uikit/Button/Button';
@@ -103,7 +103,52 @@ const Index = () => {
   const signalRUrl = 'https://uat.zippyrideuserapi.projectpulse360.com/riderhub';
   const socketUrl = 'wss://www.uat.zippyrideuserapi.projectpulse360.com/riderhub'; 
   const [socket, setSocket] = useState(null);
-  useEffect(() => {
+  // useEffect(() => {
+  //   const connection = new HubConnectionBuilder()
+  //     .withUrl(signalRUrl)
+  //     .configureLogging(LogLevel.Information)
+  //     .withAutomaticReconnect()
+  //     .build();
+
+  //   const startConnection = async () => {
+  //     setIsLoading(true)
+  //     try {
+  //       await connection.start();
+  //       console.log('✅ SignalR Connected');
+
+  //       // Server calling this? You need this listener
+  //       connection.on('locationupdated', (data) => {
+  //         console.log('📍 Location updated by server:', data);
+  //         setRiders(data)
+    
+  //       });
+
+  //       connection.on('ReceiveNearestRiders', (riders) => {
+  //         console.log('📥 Nearest riders:', riders);
+  //       });
+
+  //       // Sample method if 'GetNearestRiders' isn't defined:
+  //       await connection.invoke('UpdateLocation', 12.787926, 79.662123 , false, 10);
+
+  //     } catch (err) {
+  //       console.error('❌ SignalR Connection Error:', err);
+  //     }
+  //     setIsLoading(false)
+  //   };
+
+  //   startConnection();
+
+  //   return () => {
+  //     connection.stop();
+  //   };
+  // }, []);
+
+
+
+
+
+
+  useLayoutEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl(signalRUrl)
       .configureLogging(LogLevel.Information)
@@ -141,8 +186,7 @@ const Index = () => {
     return () => {
       connection.stop();
     };
-  }, []);
-
+  }, [signalRUrl]);
   // Handle keyboard appearance to scroll to inputs
   useEffect(() => {
     // getriders()
@@ -166,6 +210,17 @@ const Index = () => {
   const currentLocation = {
     latitude: 12.787926,
     longitude:79.662123
+  };
+ const changeZoom = (delta) => {
+    const newZoom = zoomLevel + delta;
+    setZoomLevel(newZoom);
+
+    mapRef.current?.animateCamera(
+      {
+        zoom: newZoom,
+      },
+      { duration: 500 }
+    );
   };
 
   const getriders = async () =>{
@@ -202,6 +257,7 @@ const Index = () => {
             longitudeDelta: 0.05,
           }}
         >
+        
          
     {/* <Marker title="Current Location">
       <View style={styles.blueDotWrapper}>
@@ -227,7 +283,7 @@ const Index = () => {
         { backgroundColor: rider.isFemale ? 'pink' : 'green' }
       ]}
     /> */}
-                  <Image source={vechil} style={{ width: 30, height: 30 }} />
+                  <Image source={require('../assets/livcar.png')} style={{ width: 30, height: 30 }} />
 
   </Marker>
 ))}
@@ -474,6 +530,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     top: 10,
     width: '100%',
+  },
+  controls: {
+    position: 'absolute',
+    bottom: 50,
+    alignSelf: 'center',
+    gap: 10,
   },
   mapBox: {
     width: BOX_WIDTH,
