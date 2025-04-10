@@ -63,6 +63,7 @@ const SignInScreen = () => {
           Showsuccess()
           setTimeout(() => {
             navigation.navigate('Places')
+
           }, 1000);
         }
         
@@ -73,6 +74,9 @@ const SignInScreen = () => {
     },
   });
 
+ const navigate=()=>{
+  navigation.navigate('Places')
+ }        
 
   const toastConfig = {
     success: ({ text1, text2 }) => (
@@ -162,7 +166,7 @@ const SignInScreen = () => {
           {/* Password Input */}
           <Text style={styles.label}>Password</Text>
           <InputText
-            maxLength={12}
+            maxLength={30}
             placeholder="Enter password"
             value={formik.values.password}
             onChange={formik.handleChange('password')}
@@ -190,8 +194,8 @@ const SignInScreen = () => {
           <Button onClick={() => 
             {
               Keyboard.dismiss();
-                formik.handleSubmit(); 
-          
+               formik.handleSubmit(); 
+              // navigate()
 
             }} style={styles.button}>
             Sign in

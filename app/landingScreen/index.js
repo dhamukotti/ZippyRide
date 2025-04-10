@@ -1,14 +1,17 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Image, View, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window'); // Get device width & height
-
+import { getItem } from '../uikit/UikitUtils/mmkvStorage';
 const LunchImage = () => {
   const navigation = useNavigation()
-
-
+  useEffect(() => {
+    const userData = getItem('isLoggedIn'); // Synchronous call
+    console.log(userData, 'userdata'); // This should log immediately
+  }, []);
 setTimeout(() => {
-  navigation.navigate('Common')
+
+   navigation.navigate('Common')
 }, 2000);
 
   return (

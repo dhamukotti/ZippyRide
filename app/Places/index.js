@@ -46,7 +46,7 @@ const carIcon = require('../assets/car-white.png');
 const vechil = require('../assets/vechial.png'); 
 
 const BOX_WIDTH = width * 0.9;
-const BOX_HEIGHT = height * 0.4;
+const BOX_HEIGHT = height * 0.3;
 const MARGIN_TOP = height * 0.03;
 const INPUT_WIDTH = width * 0.91;
 const INPUT_HEIGHT = height * 0.05;
@@ -103,45 +103,6 @@ const Index = () => {
   const signalRUrl = 'https://uat.zippyrideuserapi.projectpulse360.com/riderhub';
   const socketUrl = 'wss://www.uat.zippyrideuserapi.projectpulse360.com/riderhub'; 
   const [socket, setSocket] = useState(null);
-  // useEffect(() => {
-  //   const connection = new HubConnectionBuilder()
-  //     .withUrl(signalRUrl)
-  //     .configureLogging(LogLevel.Information)
-  //     .withAutomaticReconnect()
-  //     .build();
-
-  //   const startConnection = async () => {
-  //     setIsLoading(true)
-  //     try {
-  //       await connection.start();
-  //       console.log('✅ SignalR Connected');
-
-  //       // Server calling this? You need this listener
-  //       connection.on('locationupdated', (data) => {
-  //         console.log('📍 Location updated by server:', data);
-  //         setRiders(data)
-    
-  //       });
-
-  //       connection.on('ReceiveNearestRiders', (riders) => {
-  //         console.log('📥 Nearest riders:', riders);
-  //       });
-
-  //       // Sample method if 'GetNearestRiders' isn't defined:
-  //       await connection.invoke('UpdateLocation', 12.787926, 79.662123 , false, 10);
-
-  //     } catch (err) {
-  //       console.error('❌ SignalR Connection Error:', err);
-  //     }
-  //     setIsLoading(false)
-  //   };
-
-  //   startConnection();
-
-  //   return () => {
-  //     connection.stop();
-  //   };
-  // }, []);
 
 
   useLayoutEffect(() => {
@@ -172,7 +133,7 @@ const Index = () => {
         const updateLocation = () => {
           connection
             .invoke('UpdateLocation', 12.787926, 79.662123, false, 10)
-            .catch((err) => console.error('❌ Invoke Error:', err));
+            .catch((err) => console.error('❌ Invokse Error:', err));
         };
   
         updateLocation(); // Initial call
@@ -219,25 +180,9 @@ const Index = () => {
     latitude: 12.787926,
     longitude:79.662123
   };
- const changeZoom = (delta) => {
-    const newZoom = zoomLevel + delta;
-    setZoomLevel(newZoom);
 
-    mapRef.current?.animateCamera(
-      {
-        zoom: newZoom,
-      },
-      { duration: 500 }
-    );
-  };
+  const listMaxHeight = height * 0.4;
 
-  const getriders = async () =>{
-    const value = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/riders/nearby?latitude=${12.787926}&longitude=${79.662123}&radius=${10}`)
-    .then((res)=>{
-     //   setRiders(res.data)
-     
-    })
-}
 
 
   return (
@@ -266,13 +211,7 @@ const Index = () => {
           }}
         >
         
-         
-    {/* <Marker title="Current Location">
-      <View style={styles.blueDotWrapper}>
-        <View style={styles.blueDot} />
-      </View>
-    </Marker>
-   */}
+
    {currentLocation && (
   <Marker coordinate={currentLocation} title="Current Location">
     <View style={styles.blueDotWrapper}>
@@ -285,12 +224,7 @@ const Index = () => {
     key={rider.riderId}
     coordinate={{ latitude: rider.latitude, longitude: rider.longitude }}
   >
-    {/* <View
-      style={[
-        styles.marker,
-        { backgroundColor: rider.isFemale ? 'pink' : 'green' }
-      ]}
-    /> */}
+  
                   <Image source={require('../assets/livcar.png')} style={{ width: 30, height: 30 }} />
 
   </Marker>
@@ -360,23 +294,55 @@ const Index = () => {
         </View>
 
         {/* Current Location Input */}
-             <View style={styles.inputWrapper(isOriginExpanded)}>
+        
+             <View style={styles.currentlocation}>
           <Image source={require('../assets/live.png')} style={styles.imageStyle} />
-          <GooglePlacesAutocomplete
+          {/* <GooglePlacesAutocomplete
             placeholder="Current Location"
+          
             onPress={(data, details = null) => {
-              setOrigin({
-                latitude: details.geometry.location.lat,
-                longitude: details.geometry.location.lng,
-              });
-              setIsOriginExpanded(false); // Collapse when selection is made
+              if (details && details.geometry && details.geometry.location) {
+                const latitude = details.geometry.location.lat;
+                const longitude = details.geometry.location.lng;
+          
+                console.log("Latitude:", latitude);
+                console.log("Longitude:", longitude);
+          
+                setOrigin({ latitude, longitude });
+                setIsOriginExpanded(false); // Collapse input on selection
+              }
             }}
             textInputProps={{
-              onFocus: () => setIsOriginExpanded(true), // Expand when focused
+              onFocus: () =>{
+
+               setIsOriginExpanded(true)
+               setOrigin('')
+              }
+               , // Expand when focused
               onBlur: () => setIsOriginExpanded(false), // Collapse when unfocused
               autoFocus: false,
               style: styles.inputStyles,
               placeholderTextColor: 'black',
+            }}
+            styles={{
+             
+            
+              listView: {
+                position: 'absolute',
+                bottom:40+15,
+                backgroundColor: 'white',
+                maxHeight: listMaxHeight,
+                width: width*0.8,
+                marginHorizontal: 16,
+                borderRadius: 8,
+                zIndex: 10,
+                elevation: 5,
+              },
+              row: {
+                padding: 12,
+                borderBottomWidth: 1,
+                borderBottomColor: '#eee',
+              },
             }}
             query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
             fetchDetails={true}
@@ -388,7 +354,79 @@ const Index = () => {
                 </Flex>
               </Pressable>
             )}
-          />
+          /> */}
+          <GooglePlacesAutocomplete
+  placeholder="Current Location"
+  onPress={(data, details = null) => {
+    if (details && details.geometry && details.geometry.location) {
+      const latitude = details.geometry.location.lat;
+      const longitude = details.geometry.location.lng;
+
+      console.log("Latitude:", latitude);
+      console.log("Longitude:", longitude);
+
+      setOrigin({ latitude, longitude });
+      setIsOriginExpanded(false);
+    }
+  }}
+  textInputProps={{
+    onFocus: () => {
+      setIsOriginExpanded(true);
+      setOrigin('');
+    },
+    onBlur: () => setIsOriginExpanded(false),
+    autoFocus: false,
+    style: styles.inputStyles,
+    placeholderTextColor: 'black',
+  }}
+  styles={{
+    listView: {
+      position: 'absolute',
+      bottom: 55,
+      backgroundColor: 'white',
+      maxHeight: listMaxHeight,
+      width: width * 0.88,
+      left:-width*0.09,
+      marginHorizontal: width * 0.05,
+      borderRadius: 8,
+      // zIndex: 10,
+      elevation: 5,
+      alignSelf: 'center',
+    },
+    row: {
+      paddingVertical: 14,
+      paddingHorizontal: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#eee',
+     
+    },
+    poweredContainer: {
+      display: 'none',
+      height: 0,
+      opacity: 0,
+    },
+    powered: {
+      display: 'none',
+    },
+  }}
+  query={{
+    key: GOOGLE_MAPS_APIKEY,
+    language: 'en',
+  }}
+  fetchDetails={true}
+  renderRow={(data) => (
+    <Text style={{ color: 'black', textAlign: 'center',  }}>
+      {data.description}
+    </Text>
+  )}
+  renderRightButton={() => (
+    <Pressable>
+      <Flex center middle overrideStyle={styles.svgGps}>
+        <SvgGps fill={PRIMARY} />
+      </Flex>
+    </Pressable>
+  )}
+/>
         </View>
         
         
@@ -396,17 +434,23 @@ const Index = () => {
         <View style={styles.lineContainer}>
   <Image source={require('../assets/Line1.png')} style={styles.imageStyle1} />
 </View>
-          <View style={styles.inputWrapper(isDestinationExpanded)}>
+          <View style={styles.currentlocation}>
           <Image source={require('../assets/locationicon.png')} style={styles.imageStyle} />
         
                 <GooglePlacesAutocomplete
                   placeholder="Where?"
+                
                   onPress={(data, details = null) => {
-                    setDestination({
-                      latitude: details.geometry.location.lat,
-                      longitude: details.geometry.location.lng,
-                    });
-                    setIsDestinationExpanded(false); // Collapse when selection is made
+                    if (details && details.geometry && details.geometry.location) {
+                      const latitude = details.geometry.location.lat;
+                      const longitude = details.geometry.location.lng;
+                
+                      console.log("Latitude:", latitude);
+                      console.log("Longitude:", longitude);
+                
+                      setDestination({ latitude, longitude });
+                      setIsDestinationExpanded(false); // Collapse input on selection
+                    }
                   }}
                   textInputProps={{
                     onFocus: () => setIsDestinationExpanded(true), // Expand when focused
@@ -414,6 +458,36 @@ const Index = () => {
                     autoFocus: false,
                     style: styles.inputStyles,
                     placeholderTextColor:'black'
+                  }}
+                  styles={{
+                    listView: {
+                      position: 'absolute',
+                      bottom: 55,
+                      backgroundColor: 'white',
+                      maxHeight: listMaxHeight,
+                      width: width * 0.88,
+                      left:-width*0.09,
+                      marginHorizontal: width * 0.05,
+                      borderRadius: 8,
+                      // zIndex: 10,
+                      elevation: 5,
+                      alignSelf: 'center',
+                    },
+                    row: {
+                      paddingVertical: 14,
+                      paddingHorizontal: 10,
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#eee',
+                     
+                    },
+                    poweredContainer: {
+                      display: 'none',
+                      height: 0,
+                      opacity: 0,
+                    },
+                    powered: {
+                      display: 'none',
+                    },
                   }}
                   query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
                   fetchDetails={true}
@@ -553,6 +627,21 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 2,
     borderColor: '#333',
+  },
+  currentlocation:{
+    flexDirection: 'row', // Ensures items are placed in a row
+    alignItems: 'center', // Aligns items vertically
+    backgroundColor: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 0,
+
+    paddingVertical: 5,
+    //width: '100%',
+    //elevation: 3,
+      width: INPUT_WIDTH,
+      marginTop: 30,
+  
+      height: 40,
   },
   inputWrapper: (isExpanded) => ({
     // width: INPUT_WIDTH,

@@ -14,6 +14,7 @@ import SvgRightArrow from '../icons/SvgRightArrow';
 import { Rating } from 'react-native-ratings';
 import SvgBack from '../icons/SvgBack';
 import { useNavigation } from '@react-navigation/native';
+import { setItem } from '../uikit/UikitUtils/mmkvStorage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -84,7 +85,15 @@ const ProfileScreen = () => {
         {/* Menu Items */}
         {menuItems.map((item, index) => (
           <TouchableOpacity key={index} style={styles.menuRow}
-          onPress={() => navigation.navigate(item.screen)}
+          onPress={() =>{ 
+            setItem('isLoggedIn','false')
+            setTimeout(() => {
+              navigation.navigate(item.screen)
+
+            }, 1000);
+       
+
+          }}
 
           >
             <View style={styles.menuItem}>
