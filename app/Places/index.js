@@ -144,49 +144,57 @@ const Index = () => {
   // }, []);
 
 
-
-
-
-
   useLayoutEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl(signalRUrl)
       .configureLogging(LogLevel.Information)
       .withAutomaticReconnect()
       .build();
-
+  
+     let intervalId;
+  
     const startConnection = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         await connection.start();
         console.log('✅ SignalR Connected');
-
-        // Server calling this? You need this listener
+  
         connection.on('locationupdated', (data) => {
-          console.log('📍 Location updated by server:', data);
-          setRiders(data)
-    
+       //   console.log('📍 Location updated by server:', data);
+          setRiders(data);
         });
-
+  
         connection.on('ReceiveNearestRiders', (riders) => {
           console.log('📥 Nearest riders:', riders);
         });
-
-        // Sample method if 'GetNearestRiders' isn't defined:
-        await connection.invoke('UpdateLocation', 12.787926, 79.662123 , false, 10);
-
+  
+        // Call UpdateLocation immediately and then every 1 second
+        const updateLocation = () => {
+          connection
+            .invoke('UpdateLocation', 12.787926, 79.662123, false, 10)
+            .catch((err) => console.error('❌ Invoke Error:', err));
+        };
+  
+        updateLocation(); // Initial call
+        intervalId = setInterval(updateLocation, 3000); // Every 1 sec
+  
       } catch (err) {
         console.error('❌ SignalR Connection Error:', err);
       }
-      setIsLoading(false)
+      setIsLoading(false);
     };
-
+  
     startConnection();
-
+  
     return () => {
+      if (intervalId) clearInterval(intervalId);
       connection.stop();
     };
-  }, [signalRUrl]);
+  }, []);
+  
+
+
+
   // Handle keyboard appearance to scroll to inputs
   useEffect(() => {
     // getriders()
