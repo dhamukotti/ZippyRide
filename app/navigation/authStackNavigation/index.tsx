@@ -8,29 +8,27 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useNetInfo } from '@react-native-community/netinfo';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider } from 'react-redux';
-import { store } from './app/Reudx/slices/store';
-import BottomTabs from './Bottomtabs';
+import BottomTabs from '../bottomTabNavigation/index';
 
 // Screens
 // import Landingpage from './app/Screens/landingScreen';
-import LoginScreen from './app/Screens/Login';
-import Register from './app/Screens/Register';
-import Common from './app/Screens/Commonpage';
-import Phonelogin from './app/Screens/Phonelogin';
-import OTPVerificationScreen from './app/Screens/OtpScreen/OtpScreen';
-import OfflineScreen from './app/Screens/Offinescreen/Offlinescreen';
-import LocationComponent from './app//Screens/Location';
-import Forgotpassword from './app//Screens/Forgorpassword/Forgotpassword';
-import ForgotPasswordVerifyScreen from './app/Screens/Forgorpassword/Forgotpasswordverifyscreen';
-import VersionCheck from './app/Screens/VersionChecker/index';
-import CreatePasswordScreen from './app/Screens/Forgorpassword/Createpasswordscreen';
-import IncorrectCodeScreen from './app/Screens/Forgorpassword/Verificationfailedotp';
-import VerificationSuccessScreen from './app/Screens/Forgorpassword/Verificationsuccessotp';
-import Frogotpaswordmobile from './app/Screens/Forgorpassword/Forgotpasswordmobile';
-import Forgotverifymobile from './app/Screens/Forgorpassword/Forgotverifyscreenmobile';
-import Createpasswordmobile from './app/Screens/Forgorpassword/Createpassworemobileno';
+import LoginScreen from '../../Screens/Login';
+import Register from '../../Screens/Register';
+import Common from '../../Screens/Commonpage';
+import Phonelogin from '../../Screens/Phonelogin';
+import OTPVerificationScreen from '../../Screens/OtpScreen/OtpScreen';
+import OfflineScreen from '../../Screens/Offinescreen/Offlinescreen';
+import LocationComponent from '../../Screens/Location';
+import Forgotpassword from '../../Screens/Forgorpassword/Forgotpassword';
+import ForgotPasswordVerifyScreen from '../../Screens/Forgorpassword/Forgotpasswordverifyscreen';
+import VersionCheck from '../../Screens/VersionChecker/index';
+import CreatePasswordScreen from '../../Screens/Forgorpassword/Createpasswordscreen';
+import IncorrectCodeScreen from '../..//Screens/Forgorpassword/Verificationfailedotp';
+import VerificationSuccessScreen from '../../Screens/Forgorpassword/Verificationsuccessotp';
+import Frogotpaswordmobile from '../../Screens/Forgorpassword/Forgotpasswordmobile';
+import Forgotverifymobile from '../../Screens/Forgorpassword/Forgotverifyscreenmobile';
+import Createpasswordmobile from '../../Screens/Forgorpassword/Createpassworemobileno';
 
-import { MainStackNavigation } from './app/navigation/mainStackNavigation';
 enableScreens();
 const Stack = createNativeStackNavigator();
 
@@ -43,9 +41,7 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>
-      <SafeAreaProvider>
-        {netInfo.isConnected || netInfo.isConnected === null ? (
+   
           <NavigationContainer>
             <Stack.Navigator
               initialRouteName="Main"
@@ -87,11 +83,7 @@ export default function App() {
               <Stack.Screen name="VersionCheck" component={VersionCheck} />
             </Stack.Navigator>
           </NavigationContainer>
-        ) : (
-          <OfflineScreen />
-        )}
-      </SafeAreaProvider>
-    </Provider>
+     
   );
 }
 

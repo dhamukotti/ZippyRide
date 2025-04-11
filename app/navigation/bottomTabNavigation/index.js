@@ -3,21 +3,21 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import SvgHome from './app/icons/SvgHome';
-import SvgUser from './app/icons/SvgUser';
-import SvgGps from './app/icons/SvgGps';
+import SvgHome from '../../icons/SvgHome';
+import SvgUser from '../../icons/SvgUser';
+import SvgGps from '../../icons/SvgGps';
 
 // Import your screen components
-import Landingpage from './app/Screens/landingScreen';
-import Places from './app/Screens/Places';
-import Mapviwscrron from './app/Screens/Places/Mapview';
-import CityToCityScreen from './app/Screens/Citytocity/Citytocity';
-import Historyofride from './app/Screens/BookingSuccess/Historyofride';
-import ProfileScreen from './app/Screens/Profile/ProfileScreen';
-import Paymentrequest from './app/Screens/Paymentrequest/Paymentrequest';
-import RiderVerificationScreen from './app/Screens/BookingSuccess/RiderVerificationScreen';
-import PaymentScreen from './app/Screens/BookingSuccess/PaymentScreen';
-import Ridesuccess from './app/Screens/BookingSuccess/Ridesuccess';
+import Landingpage from '../../Screens/landingScreen';
+import Places from '../../Screens/Places';
+import Mapviwscrron from '../../Screens/Places/Mapview';
+import CityToCityScreen from '../../Screens/Citytocity/Citytocity';
+import Historyofride from '../../Screens/BookingSuccess/Historyofride';
+import ProfileScreen from '../../Screens/Profile/ProfileScreen';
+import Paymentrequest from '../../Screens/Paymentrequest/Paymentrequest';
+import RiderVerificationScreen from '../../Screens/BookingSuccess/RiderVerificationScreen';
+import PaymentScreen from '../../Screens/BookingSuccess/PaymentScreen';
+import Ridesuccess from '../../Screens/BookingSuccess/Ridesuccess';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

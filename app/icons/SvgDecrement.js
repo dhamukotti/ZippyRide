@@ -1,7 +1,7 @@
 import React from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import Svg, {Path, Rect, Line} from 'react-native-svg';
-import Text from '../uikit/Text/Text';
+import Text from '../../uikit/Text/Text';
 
 const defaultProps = {
   width: 29,

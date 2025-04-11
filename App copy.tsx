@@ -46,47 +46,48 @@ export default function App() {
     <Provider store={store}>
       <SafeAreaProvider>
         {netInfo.isConnected || netInfo.isConnected === null ? (
-          <NavigationContainer>
-            <Stack.Navigator
-              initialRouteName="Main"
-              screenOptions={{
-                headerShown: false,
-                animation: 'fade',
-              }}
-            >
-              {/* Authentication Screens */}
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Register" component={Register} />
-              <Stack.Screen name="Phonelogin" component={Phonelogin} />
-              <Stack.Screen name="OTPVerificationScreen" component={OTPVerificationScreen} />
+          // <NavigationContainer>
+          //   <Stack.Navigator
+          //     initialRouteName="Main"
+          //     screenOptions={{
+          //       headerShown: false,
+          //       animation: 'fade',
+          //     }}
+          //   >
+          //     {/* Authentication Screens */}
+          //     <Stack.Screen name="Login" component={LoginScreen} />
+          //     <Stack.Screen name="Register" component={Register} />
+          //     <Stack.Screen name="Phonelogin" component={Phonelogin} />
+          //     <Stack.Screen name="OTPVerificationScreen" component={OTPVerificationScreen} />
               
-              {/* Forgot Password Flow */}
-              <Stack.Screen name="Forgotpassword" component={Forgotpassword} />
-              <Stack.Screen name="ForgotPasswordVerifyScreen" component={ForgotPasswordVerifyScreen} />
-              <Stack.Screen name="CreatePasswordScreen" component={CreatePasswordScreen} />
-              <Stack.Screen name="IncorrectCodeScreen" component={IncorrectCodeScreen} />
-              <Stack.Screen name="VerificationSuccessScreen" component={VerificationSuccessScreen} />
-              <Stack.Screen name="Frogotpaswordmobile" component={Frogotpaswordmobile} />
-              <Stack.Screen name="Forgotverifymobile" component={Forgotverifymobile} />
-              <Stack.Screen name="Createpasswordmobile" component={Createpasswordmobile} />
+          //     {/* Forgot Password Flow */}
+          //     <Stack.Screen name="Forgotpassword" component={Forgotpassword} />
+          //     <Stack.Screen name="ForgotPasswordVerifyScreen" component={ForgotPasswordVerifyScreen} />
+          //     <Stack.Screen name="CreatePasswordScreen" component={CreatePasswordScreen} />
+          //     <Stack.Screen name="IncorrectCodeScreen" component={IncorrectCodeScreen} />
+          //     <Stack.Screen name="VerificationSuccessScreen" component={VerificationSuccessScreen} />
+          //     <Stack.Screen name="Frogotpaswordmobile" component={Frogotpaswordmobile} />
+          //     <Stack.Screen name="Forgotverifymobile" component={Forgotverifymobile} />
+          //     <Stack.Screen name="Createpasswordmobile" component={Createpasswordmobile} />
               
-              {/* Main App with Bottom Tabs */}
-              {/* <Stack.Screen name="Main" component={BottomTabs} /> */}
-              <Stack.Screen 
-                name="Main" 
-                component={BottomTabs}
-                options={{
-                  // Prevent going back to auth screens
-                  gestureEnabled: false,
-                }}
-              />
+          //     {/* Main App with Bottom Tabs */}
+          //     {/* <Stack.Screen name="Main" component={BottomTabs} /> */}
+          //     <Stack.Screen 
+          //       name="Main" 
+          //       component={BottomTabs}
+          //       options={{
+          //         // Prevent going back to auth screens
+          //         gestureEnabled: false,
+          //       }}
+          //     />
               
-              {/* Common Screens */}
-              <Stack.Screen name="Common" component={Common} />
-              <Stack.Screen name="LocationComponent" component={LocationComponent} />
-              <Stack.Screen name="VersionCheck" component={VersionCheck} />
-            </Stack.Navigator>
-          </NavigationContainer>
+          //     {/* Common Screens */}
+          //     <Stack.Screen name="Common" component={Common} />
+          //     <Stack.Screen name="LocationComponent" component={LocationComponent} />
+          //     <Stack.Screen name="VersionCheck" component={VersionCheck} />
+          //   </Stack.Navigator>
+          // </NavigationContainer>
+          <MainStackNavigation />
         ) : (
           <OfflineScreen />
         )}

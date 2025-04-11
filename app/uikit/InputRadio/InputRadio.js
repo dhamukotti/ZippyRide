@@ -1,6 +1,6 @@
 import React from 'react';
 import {View} from 'react-native';
-import Flex from '../Flex/Flex';
+import Flex from '../../Flex/Flex';
 import Text from '../Text/Text';
 import {PRIMARY} from '../UikitUtils/colors';
 
