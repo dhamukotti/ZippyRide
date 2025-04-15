@@ -24,6 +24,7 @@ import Loader from '../../uikit/Loader/Loader';
 import RegisterSuccessModal from './registersuccess';
 import SvgEyeOutline from '../../icons/SvgEyleOutLine';
 import SvgEye from '../../icons/SvgEye';
+import Registererrormodal from './registererror'
 const SignUpScreen = () => {
   const phoneInput = useRef(null);
   const [isSuccess, setSuccess] = useState(false);
@@ -117,6 +118,8 @@ useEffect(() => {
   ];
   const [hidePassword, setHidePassword] = useState(true);
   const [hidePassword1, setHidePassword1] = useState(true);
+  const [isfailer, setisfailer] = useState(false)
+  const [failermessage, setfailermessage] = useState('')
   const phone = [
     { label: '+91', value: 'IN' },
     { label: '+9', value: 'IN' },
@@ -138,7 +141,7 @@ const [loading, setloading] = useState(false)
       .required('Confirm Password is required'),
     mobileno: Yup.string().required('Mobile Number is required'),
     address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
+    // country: Yup.string().required('Country is required'),
   });
 
   const formik = useFormik({
@@ -171,14 +174,16 @@ setloading(false)
   
     console.log(response,'response')
         if (response.error) {
-          Toast.show({
-                    type: 'error', // Use the custom type
-                    text1: 'Error',
-                    text2: 'Something Went to wrong',
-                    position: 'top', // Set position to top
-                    topOffset: 5, // Adjust distance from the top
-                  });
-
+          // Toast.show({
+          //           type: 'error', // Use the custom type
+          //           text1: 'Error',
+          //           text2: `${response.error.data.message}`,
+          //           position: 'top', // Set position to top
+          //           topOffset: 50, // Adjust distance from the top
+          //         });
+          setisfailer(true)
+console.log(response.error.data.message,'ff')
+setfailermessage(response.error.data.message)
           console.error('Signup Error:', response.error);
         }else {
           setSuccess(true)
@@ -194,6 +199,8 @@ setloading(false)
     setSuccess(false);
     formik.resetForm();
   };
+
+
    const toastConfig = {
       success: ({ text1, text2 }) => (
         <View style={{backgroundColor:'#fafafa',padding:10,borderRadius:20,width:'80%', alignSelf: 'center', // Align to the right
@@ -229,6 +236,27 @@ setloading(false)
         </View>
       ),
     };
+  
+
+  const showtoadt =() =>{
+    Toast.show({
+      type: 'error', // Use the custom type
+      text1: 'Error',
+      text2: 'Something Went to wrong',
+      position: 'top', // Set position to top
+      topOffset: 5, // Adjust distance from the top
+    });
+  }
+  const handleClose1 = () => {
+    setisfailer(false);
+   // formik.resetForm();
+  };
+
+  
+  
+  
+  
+  
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
    {loading &&  <Loader /> }
@@ -239,11 +267,13 @@ setloading(false)
          />
           
    <RegisterSuccessModal open={isSuccess} close={handleClose} />
+   <Registererrormodal open={isfailer} close={handleClose1} message={failermessage} />
+
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.contentContainer}>
           
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <SvgBack height={20} width={20} />
+                   <SvgBack height={20} width={20} />
             <Text style={[styles.title,{ color: colorScheme === 'dark' ? 'black' : 'black' }]}>Signup</Text>
           </TouchableOpacity>
 
@@ -430,7 +460,10 @@ setloading(false)
 
           <Text style={styles.termsText}>By signing up, you agree to our <Text style={styles.link}>terms of service</Text> and <Text style={styles.link}>privacy policy</Text></Text>
           
-          <TouchableOpacity style={styles.button} onPress={formik.handleSubmit}>
+          <TouchableOpacity style={styles.button} 
+         onPress={formik.handleSubmit}
+         // onPress={showtoadt}
+          >
             <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Login")}>

@@ -105,7 +105,7 @@ const Index = () => {
   const socketUrl = 'wss://www.uat.zippyrideuserapi.projectpulse360.com/riderhub'; 
   const [socket, setSocket] = useState(null);
   const [userToken, setUserToken] = useState(null);
-
+const [riderid, setriderid] = useState('')
   useEffect(() => {
     const checkLogin = async () => {
       const token = await AsyncStorage.getItem('userToken');
@@ -113,59 +113,60 @@ const Index = () => {
       setUserToken(token);
       setIsLoading(false);
     };
-
+    getallriders()
     checkLogin();
   }, []);
 
 
 
-  useLayoutEffect(() => {
-    const connection = new HubConnectionBuilder()
-      .withUrl(signalRUrl)
-      .configureLogging(LogLevel.Information)
-      .withAutomaticReconnect()
-      .build();
+  // useLayoutEffect(() => {
   
-     let intervalId;
+  //   const connection = new HubConnectionBuilder()
+  //     .withUrl(signalRUrl)
+  //     .configureLogging(LogLevel.Information)
+  //     .withAutomaticReconnect()
+  //     .build();
   
-    const startConnection = async () => {
-      setIsLoading(true);
-      try {
-        await connection.start();
-        console.log('✅ SignalR Connected');
+  //    let intervalId;
   
-        connection.on('locationupdated', (data) => {
-       //   console.log('📍 Location updated by server:', data);
-          setRiders(data);
-        });
+  //   const startConnection = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       await connection.start();
+  //       console.log('✅ SignalR Connected');
   
-        connection.on('ReceiveNearestRiders', (riders) => {
-          console.log('📥 Nearest riders:', riders);
-        });
+  //       connection.on('locationupdated', (data) => {
+  //      //   console.log('📍 Location updated by server:', data);
+  //         setRiders(data);
+  //       });
   
-        // Call UpdateLocation immediately and then every 1 second
-        const updateLocation = () => {
-          connection
-            .invoke('UpdateLocation', 12.787926, 79.662123, false, 10)
-            .catch((err) => console.error('❌ Invokse Error:', err));
-        };
+  //       connection.on('ReceiveNearestRiders', (riders) => {
+  //         console.log('📥 Nearest riders:', riders);
+  //       });
   
-        updateLocation(); // Initial call
-        intervalId = setInterval(updateLocation, 3000); // Every 1 sec
+  //       // Call UpdateLocation immediately and then every 1 second
+  //       const updateLocation = () => {
+  //         connection
+  //           .invoke('UpdateLocation', 12.787926, 79.662123, false, 10)
+  //           .catch((err) => console.error('❌ Invokse Error:', err));
+  //       };
   
-      } catch (err) {
-        console.error('❌ SignalR Connection Error:', err);
-      }
-      setIsLoading(false);
-    };
+  //       updateLocation(); // Initial call
+  //       intervalId = setInterval(updateLocation, 3000); // Every 1 sec
   
-    startConnection();
+  //     } catch (err) {
+  //       console.error('❌ SignalR Connection Error:', err);
+  //     }
+  //     setIsLoading(false);
+  //   };
   
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-      connection.stop();
-    };
-  }, []);
+  //   startConnection();
+  
+  //   return () => {
+  //     if (intervalId) clearInterval(intervalId);
+  //     connection.stop();
+  //   };
+  // }, []);
   
 
 
@@ -186,6 +187,8 @@ const Index = () => {
       }
     );
 
+
+
     return () => {
       keyboardDidShowListener.remove();
     };
@@ -198,6 +201,14 @@ const Index = () => {
     longitude:79.662123
   };
 
+
+  const getallriders = async( ) =>{
+    const value = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/riders/nearby?latitude=${12.787926}&longitude=${79.662123}&radius=${10}`)
+    .then((res)=>{
+      console.log(res.data,'res.data')
+setRiders(res.data)
+    })
+  }
   const listMaxHeight = height * 0.4;
 
 
@@ -213,9 +224,9 @@ const Index = () => {
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        {/* <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <SvgBack height={20} width={20} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <MapView
           ref={mapRef}
@@ -240,6 +251,11 @@ const Index = () => {
   <Marker
     key={rider.riderId}
     coordinate={{ latitude: rider.latitude, longitude: rider.longitude }}
+  onPress={()=>{
+    setriderid(rider.riderId)
+console.log(rider.riderId)
+  }}
+  style={{cursor:'pointer'}}
   >
   
                   <Image source={require('../../assets/livcar.png')} style={{ width: 30, height: 30 }} />
@@ -573,7 +589,7 @@ const Index = () => {
           />
         </View>
 
-        <Button onClick={() => navigation.navigate("CityToCity")} width={120}>
+        <Button onClick={() => navigation.navigate("CityToCity",{ridervalue:riderid}) } width={120}>
           Continue
         </Button>
         

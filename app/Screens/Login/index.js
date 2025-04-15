@@ -28,7 +28,7 @@ import {useDispatch} from 'react-redux';
 import {login} from '../../Reudx/slices/authSlice';
 const { width, height } = Dimensions.get('window');
 import { useSelector } from 'react-redux';
-
+import { setItem } from '../../uikit/UikitUtils/mmkvStorage';
 import Loader from '../../uikit/Loader/Loader';
 const SignInScreen = () => {
   const navigation = useNavigation();
@@ -36,8 +36,7 @@ const SignInScreen = () => {
   const [hidePassword, setHidePassword] = useState(true);
   const [loading, setLoading] = useState(false);
   const [loginMutation] = useUserLoginMutation();
-  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
-  console.log(isLoggedIn,'isLoggedIn')
+
   const SignUpSchema = Yup.object().shape({
     MobileOrEmail: Yup.string().required('Please Enter email address or mobile number '),
     password: Yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
@@ -52,10 +51,11 @@ const SignInScreen = () => {
         const payload = { MobileOrEmail: values.MobileOrEmail, password: values.password };
         console.log('Payload:', payload);
         const response = await loginMutation(payload);
-        
+      
+  
         setLoading(false);
-     console.log(response)
-     dispatch(login());
+     console.log(response.data.userId,'userid')
+   
         if (response.error) {
           Toast.show({
             type: 'error', // Use the custom type
@@ -65,11 +65,14 @@ const SignInScreen = () => {
             topOffset: 5, // Adjust distance from the top
           });
         }else {
-      
-          Showsuccess()
-          setTimeout(() => {
-            navigation.navigate('Places')
+          dispatch(login());
 
+
+          Showsuccess()
+          setItem('userdata', response.data.userId.toString());
+          setTimeout(() => {
+        
+            navigation.navigate('Places')
           }, 1000);
         }
         
@@ -80,9 +83,7 @@ const SignInScreen = () => {
     },
   });
 
- const navigate=()=>{
-  navigation.navigate('Places')
- }        
+     
 
   const toastConfig = {
     success: ({ text1, text2 }) => (

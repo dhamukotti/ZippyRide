@@ -1,128 +1,106 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Platform,
-  KeyboardAvoidingView,
-} from 'react-native';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+  HubConnectionBuilder,
+  LogLevel,
+  HttpTransportType,
+} from '@microsoft/signalr';
+import { View,Text } from 'react-native';
 
-const { height, width } = Dimensions.get('window');
+const signalRUrl = 'https://uat.zippyrideuserapi.projectpulse360.com/riderhub';
 
-const MapView = () => {
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyDyIPNKYpe9zG_JlEEhl070cC28N0q4qbc';
-  const inputHeight = 50;
-  const listMaxHeight = height * 0.4;
+const SignalRComponent = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [riders, setRiders] = useState([]);
+  const [connection, setConnection] = useState(null);
 
-  const [selectedLabel, setSelectedLabel] = useState('');
+  useLayoutEffect(() => {
+    const connectToHub = async () => {
+      setIsLoading(true);
+
+      const newConnection = new HubConnectionBuilder()
+        .withUrl(signalRUrl, {
+          transport: HttpTransportType.WebSockets,
+          // skipNegotiation: true, // Use this ONLY if backend supports WebSockets directly
+          // accessTokenFactory: () => 'your_token_here', // If using auth
+        })
+        .configureLogging(LogLevel.Debug)
+        .withAutomaticReconnect()
+        .build();
+
+      setConnection(newConnection);
+
+      let intervalId = null;
+
+      try {
+        await newConnection.start();
+        console.log('✅ SignalR Connected');
+
+        // Reconnect Events
+        newConnection.onreconnecting((error) => {
+          console.warn('⚠️ SignalR Reconnecting...', error);
+        });
+
+        newConnection.onreconnected((connectionId) => {
+          console.log('🔄 SignalR Reconnected. Connection ID:', connectionId);
+        });
+
+        newConnection.onclose((error) => {
+          console.error('❌ SignalR Connection Closed:', error);
+        });
+
+        // Handle events
+        newConnection.on('locationupdated', (data) => {
+          console.log('📍 Location updated by server:', data);
+          setRiders(data);
+        });
+
+        newConnection.on('ReceiveNearestRiders', (data) => {
+          console.log('📥 Nearest Riders:', data);
+        });
+
+        // Send location every 3 seconds
+        const updateLocation = () => {
+          newConnection
+            .invoke('UpdateLocation', 12.787926, 79.662123, false, 10)
+            .catch((err) => console.error('❌ Invoke Error:', err));
+        };
+
+        updateLocation(); // initial
+        intervalId = setInterval(updateLocation, 3000);
+
+      } catch (err) {
+        console.error('❌ SignalR Connection Error:', err);
+      }
+
+      setIsLoading(false);
+
+      // Cleanup
+      return () => {
+        if (intervalId) clearInterval(intervalId);
+        newConnection.stop().then(() => console.log('🔌 Connection stopped'));
+      };
+    };
+
+    const cleanup = connectToHub();
+
+    return () => {
+      cleanup && cleanup();
+    };
+  }, []);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View style={styles.wrapper}>
-        {/* Google Places Input */}
-        <GooglePlacesAutocomplete
-          placeholder="Current Location"
-          fetchDetails={true}
-          onPress={(data, details = null) => {
-            if (details?.geometry?.location) {
-              const { lat, lng } = details.geometry.location;
+    <View>
+      <Text>🚗 SignalR Rider Tracking</Text>
+      {isLoading ? <Text>Connecting...</Text> : <Text>Connected ✅</Text>}
 
-              const shortLabel =
-                data.description.length > 10
-                  ? data.description.substring(0, 10) + '...'
-                  : data.description;
-
-              setSelectedLabel(shortLabel);
-
-              console.log('Latitude:', lat);
-              console.log('Longitude:', lng);
-              console.log('Short Location Label:', shortLabel);
-            }
-          }}
-          query={{
-            key: GOOGLE_MAPS_APIKEY,
-            language: 'en',
-          }}
-          enablePoweredByContainer={false}
-          styles={{
-            container: {
-              width: '100%',
-              position: 'absolute',
-              bottom: 0,
-              zIndex: 10,
-            },
-            textInput: {
-              height: inputHeight,
-              backgroundColor: '#f2f2f2',
-              paddingHorizontal: 10,
-              borderRadius: 8,
-              color: 'black',
-              fontSize: 16,
-            },
-            listView: {
-              position: 'absolute',
-              bottom: inputHeight + 12,
-              backgroundColor: 'white',
-              maxHeight: listMaxHeight,
-              width: width - 32,
-              marginHorizontal: 16,
-              borderRadius: 8,
-              zIndex: 20,
-              elevation: 5,
-            },
-            row: {
-              padding: 12,
-              borderBottomWidth: 1,
-              borderBottomColor: '#eee',
-            },
-          }}
-          renderRow={(data) => (
-            <Text style={styles.suggestionText}>{data.description}</Text>
-          )}
-          textInputProps={{
-            placeholderTextColor: 'black',
-          }}
-        />
-
-        {/* Show Truncated Selected Label */}
-        {selectedLabel !== '' && (
-          <Text style={styles.selectedText}>Selected: {selectedLabel}</Text>
-        )}
+      <Text>Riders:</Text>
+      <View>
+        {riders.map((rider, index) => (
+          <Text key={index}>{JSON.stringify(rider)}</Text>
+        ))}
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
-export default MapView;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  wrapper: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  suggestionText: {
-    fontSize: 15,
-    color: 'black',
-  },
-  selectedText: {
-    position: 'absolute',
-    bottom: 60,
-    left: 20,
-    right: 20,
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#333',
-    backgroundColor: '#f0f0f0',
-    padding: 10,
-    borderRadius: 8,
-  },
-});
+export default SignalRComponent;

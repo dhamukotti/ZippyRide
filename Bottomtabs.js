@@ -55,6 +55,7 @@ function PaymentsStack() {
 function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+
       <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
   );
@@ -98,16 +99,12 @@ export default function BottomTabs() {
           };
         }}
       />
-      <Tab.Screen 
+      {/* <Tab.Screen 
         name="Rides" 
         component={RidesStack} 
         options={{ title: 'Rides' }} 
-      />
-      <Tab.Screen 
-        name="Payments" 
-        component={PaymentsStack} 
-        options={{ title: 'Payments' }} 
-      />
+      /> */}
+     
       <Tab.Screen 
         name="Profile" 
         component={ProfileStack} 

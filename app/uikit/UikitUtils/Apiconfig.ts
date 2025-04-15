@@ -159,6 +159,24 @@ import {
       }),
   
   
+// trip booking
+Tripbook: build.mutation({
+  query: payload => ({
+    url: 'trips/book',
+    method: 'POST',
+    body: payload,
+  }),
+
+
+
+  
+}),
+
+
+
+
+
+
     }),
   
   
@@ -178,7 +196,8 @@ import {
     useUserSignupMutation,
     useUserLoginMutation,
     useForgotPasswordOTPMutation,
-    useGetuserinformationMutation,useVerifyotpMutation,useForgotpasswordMutation
+    useGetuserinformationMutation,useVerifyotpMutation,useForgotpasswordMutation,
+    useTripbookMutation
     
   } = api;
   

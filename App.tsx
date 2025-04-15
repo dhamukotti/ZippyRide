@@ -10,7 +10,7 @@ import SplashScreen from 'react-native-splash-screen';
 import { Provider } from 'react-redux';
 import { store } from './app/Reudx/slices/store';
 import BottomTabs from './Bottomtabs';
-
+import SignalRComponent from './app/Screens/Places/Mapview'
 // Screens
 // import Landingpage from './app/Screens/landingScreen';
 import LoginScreen from './app/Screens/Login';
@@ -80,6 +80,8 @@ export default function App() {
                   gestureEnabled: false,
                 }}
               />
+                            <Stack.Screen name="SignalRComponent" component={SignalRComponent} />
+
               
               {/* Common Screens */}
               <Stack.Screen name="Common" component={Common} />
