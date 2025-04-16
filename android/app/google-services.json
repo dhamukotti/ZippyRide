@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "50199521991",
+    "project_id": "zippy-ride-a14b4",
+    "storage_bucket": "zippy-ride-a14b4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50199521991:android:14022731292435ddacece2",
+        "android_client_info": {
+          "package_name": "com.zippyride"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWQ6Y9iiHpTMQfmZ6NEBrAZlpRZ_Wnq1g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

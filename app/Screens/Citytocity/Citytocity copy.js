@@ -6,6 +6,8 @@ import React,{useState,useRef,useEffect} from 'react'
 import SvgBack from '../../icons/SvgBack'
 import { useNavigation, } from '@react-navigation/native'
 const { width, height } = Dimensions.get("window");
+import Loader from '../../uikit/Loader/Loader';
+
 import SvgGps from '../../icons/SvgGps';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useTripbookMutation } from '../../uikit/UikitUtils/Apiconfig';
@@ -37,12 +39,14 @@ const Citytocity = ({route}) => {
   const [isDestinationExpanded, setIsDestinationExpanded] = useState(false);
   const mapRef = useRef(null);
     const [tripbooking, { isLoading: isSignupLoading }] = useTripbookMutation();
+  const [loading, setloading] = useState(false)
   
   const [isEnabled, setIsEnabled] = useState(false);
   const scrollViewRef = useRef(null);
   const [carType, setCarType] = useState('');
   const [showDropDown, setShowDropDown] = useState(false);
 const [userid, setuserid] = useState('')
+const [errors, setErrors] = useState({});
   const carTypeList = [
     { label: 'EV', value: 1,id:1 },
     { label: 'SUV', value: 2,id:2 },
@@ -51,7 +55,7 @@ const [userid, setuserid] = useState('')
   ];
 
   useEffect(() => {
-    console.log(route.params?.ridervalue,'ridervalue')
+    console.log(route.params?.ridervalue,route.params?.currentLocation,'cyrr',route.params?.tolocation,'ridervalue')
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       (e) => {
@@ -73,61 +77,112 @@ const [userid, setuserid] = useState('')
 
 
 
-  const SignUpSchema = Yup.object().shape({
-  });
-
  const useridvalue =getItem('userdata')
 console.log(useridvalue,'useridvalue')
-// setuserid(useridvalue)
-  const formik = useFormik({
-    initialValues: {
-       userId: "", 
-       pickupLocation: "", 
-       pickupLatitude: "" ,
-       pickupLongitude: "",
-        dropLocation: "", 
-        dropLatitude: "",
-         dropLongitude:"",
-          vehId: "",
-         payBy:"",
-          riderId: ""
-    },
-    validationSchema: SignUpSchema,
-    onSubmit: async (values) => {
+
+//   const formik = useFormik({
+//     initialValues: {
+//        userId: "", 
+//        pickupLocation: "", 
+//        pickupLatitude: "" ,
+//        pickupLongitude: "",
+//         dropLocation: "", 
+//         dropLatitude: "",
+//          dropLongitude:"",
+//           vehId: "",
+//          payBy:"",
+//           riderId: ""
+//     },
+//     validationSchema: SignUpSchema,
+//     onSubmit: async (values) => {
       
-      try {
+//       try {
   
-        const payload = {
-          userId:useridvalue, 
-          pickupLocation: "Location A", 
-          pickupLatitude: origin.latitude ,
-          pickupLongitude: origin.longitude,
-           dropLocation: "Location B", 
-           dropLatitude:origin.latitude,
-            dropLongitude:origin.longitude,
-             vehId: 1,
-            payBy:"Cash",
-             riderId: route.params?.ridervalue
-        };
-        console.log(payload,'payload')
-        const response = await tripbooking(payload);
+//         const payload = {
+//           userId:useridvalue, 
+//           pickupLocation: "Location A", 
+//           pickupLatitude: origin.latitude ,
+//           pickupLongitude: origin.longitude,
+//            dropLocation: "Location B", 
+//            dropLatitude:origin.latitude,
+//             dropLongitude:origin.longitude,
+//              vehId: 1,
+//             payBy:"Cash",
+//              riderId: route.params?.ridervalue
+//         };
+//         console.log(payload,'payload')
+//         const response = await tripbooking(payload);
   
-    console.log(response,'response')
-        if (response.error) {
+//     console.log(response,'response')
+//         if (response.error) {
         
         
 
-          console.error('Signup Error:', response.error);
-        }else {
+//           console.error('Signup Error:', response.error);
+//         }else {
        
-        }
-      } catch (error) {
-        console.error('Signup failed:', error);
-      }
-    },
-  });
+//         }
+//       } catch (error) {
+//         console.error('Signup failed:', error);
+//       }
+//     },
+//   });
 
 
+const validate = () => {
+  const newErrors = {};
+
+  if (!origin
+
+  ) {
+    newErrors.origin = 'Pickup location is required';
+  }
+
+  if (!destination || destination === 0) {
+    newErrors.destination = 'Please select a valid pickup location';
+  }
+
+
+
+ 
+
+  return newErrors;
+};
+
+const handleSubmit = async () => {
+  // const validationErrors = validate();
+  // setErrors(validationErrors); // Update the errors in the state
+
+  // // If there are validation errors, don't proceed
+  // if (Object.keys(validationErrors).length > 0) {
+  //   return;
+  // }
+
+  const payload = {
+    userId: useridvalue,
+    pickupLocation: "Location A",
+    pickupLatitude: origin.latitude,
+    pickupLongitude: origin.longitude,
+    dropLocation: "Location B",
+    dropLatitude: origin.latitude,
+    dropLongitude: origin.longitude,
+    vehId: 1,
+    payBy: "Cash",
+    riderId: route.params?.ridervalue
+  };
+
+  try {
+    const response = await tripbooking(payload);
+    console.log(response, 'response');
+    if (response.error) {
+      console.error('Trip Booking Error:', response.error);
+    } else {
+      // success logic here
+    }
+  } catch (error) {
+    console.error('Trip Booking Failed:', error);
+  }
+};
 
 
   return (
@@ -141,7 +196,7 @@ console.log(useridvalue,'useridvalue')
                 <SvgBack height={20} width={20} />
                 <Text style={styles.backText}>Book Your Trip</Text>
             </TouchableOpacity> */}
-
+   {loading &&  <Loader /> }
 <View style={styles.headerContainer}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <SvgBack height={20} width={20} />
@@ -160,8 +215,8 @@ showsVerticalScrollIndicator={false}
                    >
             <View style={styles.from}>
                 <Image source={require('../../assets/live.png')} style={styles.imageStyle} />
-              
-               <GooglePlacesAutocomplete
+              <Text style={{color:'black',fontWeight:'bold'}}>{route.params?.currentLocation.description}</Text>
+               {/* <GooglePlacesAutocomplete
                   placeholder="Current Location"
                   onPress={(data, details = null) => {
                     setOrigin({
@@ -169,7 +224,9 @@ showsVerticalScrollIndicator={false}
                       longitude: details.geometry.location.lng,
                     });
                     setIsOriginExpanded(false); // Collapse when selection is made
+
                   }}
+                  
                   textInputProps={{
                     onFocus: () => setIsOriginExpanded(true), // Expand when focused
                     onBlur: () => setIsOriginExpanded(false), // Collapse when unfocused
@@ -187,16 +244,19 @@ showsVerticalScrollIndicator={false}
                       </Flex>
                     </Pressable>
                   )}
-                />
+                /> */}
               
                 </View>
+                {/* {errors.pickupLocation && <Text style={{ color: 'red' }}>{errors.pickupLocation}</Text>} */}
+
                 <Image source={require('../../assets/Line1.png')} style={styles.imageStyle1} />
 
 
 <View style={styles.to}>
   <Image source={require('../../assets/locationicon.png')} style={styles.imageStyle} />
+  <Text style={{color:'black',fontWeight:'bold'}}>{route.params?.tolocation.description}</Text>
 
-        <GooglePlacesAutocomplete
+        {/* <GooglePlacesAutocomplete
           placeholder="Where?"
           onPress={(data, details = null) => {
             setDestination({
@@ -222,13 +282,14 @@ showsVerticalScrollIndicator={false}
               </Flex>
             </Pressable>
           )}
-        />
+        /> */}
         
       </View>
+      {/* <Text style={{color:'red',textAlign:'left',marginLeft:width*0.09, top:10,fontSize:10}}>Please Select Where Location</Text> */}
+
       
    <View style={styles.inputContainer}>
     
-          {/* Email Input */}
           <Text style={styles.label}> When</Text>
 
           <View style={styles.When}>
@@ -267,7 +328,6 @@ showsVerticalScrollIndicator={false}
               />
           </View>
 
-          {/* Password Input */}
           <Text style={styles.Passengerslabel}> No of Passengers</Text>
 
              <View style={styles.inputWrapperINPUT}>
@@ -314,8 +374,7 @@ showsVerticalScrollIndicator={false}
            </View>
              <View style={styles.buttonContainer}>
                            <TouchableOpacity 
-                              onPress={formik.handleSubmit}
-                              // onPress={showtoadt}
+                              onPress={handleSubmit}
                            style={styles.continueButton}>
                                <Text style={styles.continueText}>Continue</Text>
                            </TouchableOpacity>
@@ -378,11 +437,11 @@ scrollContainer: {
     backgroundColor: 'white',
     borderRadius: 8,
     width: '100%',
-    marginTop: height * 0.03,
+    marginTop: height * 0.01,
   },
   imageStyle1:{
-   marginLeft:width*0.02,
-    height:30 // Adds spacing between image and input field
+   marginLeft:width*0.028,
+    height:20 // Adds spacing between image and input field
   
   },
   imageStyle: {

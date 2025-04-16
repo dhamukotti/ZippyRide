@@ -55,7 +55,7 @@ const [errors, setErrors] = useState({});
   ];
 
   useEffect(() => {
-    console.log(route.params?.ridervalue,'ridervalue')
+    console.log(route.params?.ridervalue,route.params?.currentLocation,'cyrr',route.params?.tolocation,'ridervalue')
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       (e) => {
@@ -77,14 +77,9 @@ const [errors, setErrors] = useState({});
 
 
 
-  // const SignUpSchema = Yup.object().shape({
-  //   pickupLocation: Yup.string().required('Pickup location is required'),
-
-  // });
-
  const useridvalue =getItem('userdata')
 console.log(useridvalue,'useridvalue')
-// // setuserid(useridvalue)
+
 //   const formik = useFormik({
 //     initialValues: {
 //        userId: "", 
@@ -155,6 +150,7 @@ const validate = () => {
 };
 
 const handleSubmit = async () => {
+  setloading(true)
   // const validationErrors = validate();
   // setErrors(validationErrors); // Update the errors in the state
 
@@ -165,12 +161,12 @@ const handleSubmit = async () => {
 
   const payload = {
     userId: useridvalue,
-    pickupLocation: "Location A",
-    pickupLatitude: origin.latitude,
-    pickupLongitude: origin.longitude,
-    dropLocation: "Location B",
-    dropLatitude: origin.latitude,
-    dropLongitude: origin.longitude,
+    pickupLocation: route.params?.currentLocation.description,
+    pickupLatitude: route.params?.currentLocation.latitude,
+    pickupLongitude: route.params?.currentLocation.longitude,
+    dropLocation: route.params?.tolocation.description,
+    dropLatitude:route.params?.tolocation.latitude,
+    dropLongitude: route.params?.tolocation.longitude,
     vehId: 1,
     payBy: "Cash",
     riderId: route.params?.ridervalue
@@ -179,6 +175,7 @@ const handleSubmit = async () => {
   try {
     const response = await tripbooking(payload);
     console.log(response, 'response');
+    setloading(false)
     if (response.error) {
       console.error('Trip Booking Error:', response.error);
     } else {
@@ -212,90 +209,49 @@ const handleSubmit = async () => {
 
 
             <ScrollView
-//ref={scrollViewRef}
 showsVerticalScrollIndicator={false}
 
                      contentContainerStyle={styles.scrollContainer}
                      keyboardShouldPersistTaps="handled"
                    >
-            <View style={styles.from}>
-                <Image source={require('../../assets/live.png')} style={styles.imageStyle} />
-              
-               <GooglePlacesAutocomplete
-                  placeholder="Current Location"
-                  onPress={(data, details = null) => {
-                    setOrigin({
-                      latitude: details.geometry.location.lat,
-                      longitude: details.geometry.location.lng,
-                    });
-                    setIsOriginExpanded(false); // Collapse when selection is made
+                    <View style={styles.cardContainer}>
+      <View style={styles.from}>
+        <Image source={require('../../assets/live.png')} style={styles.imageStyle} />
+        <Text style={styles.textStyle}>
+          {route?.params?.currentLocation?.description}
+        </Text>
+      </View>
 
-                  }}
-                  
-                  textInputProps={{
-                    onFocus: () => setIsOriginExpanded(true), // Expand when focused
-                    onBlur: () => setIsOriginExpanded(false), // Collapse when unfocused
-                    autoFocus: false,
-                    style: styles.inputStyles,
-                    placeholderTextColor: 'black',
-                  }}
-                  query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
-                  fetchDetails={true}
-                  renderRow={(data) => <Text style={{ color: 'black' }}>{data.description}</Text>}
-                  renderRightButton={() => (
-                    <Pressable>
-                      <Flex center middle overrideStyle={styles.svgGps}>
-                        <SvgGps fill={PRIMARY} />
-                      </Flex>
-                    </Pressable>
-                  )}
-                />
+      <Image source={require('../../assets/Line1.png')} style={styles.imageStyle1} />
+
+      <View style={styles.to}>
+        <Image source={require('../../assets/locationicon.png')} style={styles.imageStyle} />
+        <Text style={styles.textStyle}>
+          {route?.params?.tolocation?.description}
+        </Text>
+      </View>
+    </View>
+            {/* <View style={styles.from}>
+                <Image source={require('../../assets/live.png')} style={styles.imageStyle} />
+              <Text style={{color:'black',fontWeight:'bold'}}>{route.params?.currentLocation.description}</Text>
+             
               
                 </View>
-                {errors.pickupLocation && <Text style={{ color: 'red' }}>{errors.pickupLocation}</Text>}
 
                 <Image source={require('../../assets/Line1.png')} style={styles.imageStyle1} />
 
 
 <View style={styles.to}>
   <Image source={require('../../assets/locationicon.png')} style={styles.imageStyle} />
+  <Text style={{color:'black',fontWeight:'bold'}}>{route.params?.tolocation.description}</Text>
 
-        <GooglePlacesAutocomplete
-          placeholder="Where?"
-          onPress={(data, details = null) => {
-            setDestination({
-              latitude: details.geometry.location.lat,
-              longitude: details.geometry.location.lng,
-            });
-            setIsDestinationExpanded(false); // Collapse when selection is made
-          }}
-          textInputProps={{
-            onFocus: () => setIsDestinationExpanded(true), // Expand when focused
-            onBlur: () => setIsDestinationExpanded(false), // Collapse when unfocused
-            autoFocus: false,
-            style: styles.inputStyles,
-            placeholderTextColor:'black'
-          }}
-          query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
-          fetchDetails={true}
-          renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
-          renderRightButton={() => (
-            <Pressable>
-              <Flex center middle overrideStyle={styles.svgGps}>
-                <SvgGps fill={PRIMARY} />
-              </Flex>
-            </Pressable>
-          )}
-        />
         
       </View>
-      <Text style={{color:'red',textAlign:'left',marginLeft:width*0.09, top:10,fontSize:10}}>Please Select Where Location</Text>
 
-      
+       */}
    <View style={styles.inputContainer}>
     
-          {/* Email Input */}
-          <Text style={styles.label}> When</Text>
+          {/* <Text style={styles.label}> When</Text>
 
           <View style={styles.When}>
 
@@ -304,7 +260,7 @@ showsVerticalScrollIndicator={false}
                       
                         placeholder="Now"
                       />
-          </View>
+          </View> */}
           <View>
           <Text style={{top:height*0.02,color:'black',fontSize:14}}> Vehicle</Text>
 
@@ -333,7 +289,6 @@ showsVerticalScrollIndicator={false}
               />
           </View>
 
-          {/* Password Input */}
           <Text style={styles.Passengerslabel}> No of Passengers</Text>
 
              <View style={styles.inputWrapperINPUT}>
@@ -405,7 +360,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.05,
   },
   
-
+  cardContainer: {
+    width: width * 0.9,
+    padding: 15,
+    borderRadius: 19,
+    backgroundColor: 'whitesmoke',
+    elevation: 4, // For Android
+    shadowColor: '#000', // For iOS
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    alignSelf: 'center',
+    marginTop: 20,
+  },
 headerContainer: {
   paddingHorizontal: width * 0.01,
   paddingTop: Platform.OS === 'ios' ? height * 0.07 : height * 0.05,
@@ -429,33 +396,33 @@ scrollContainer: {
   paddingBottom: height * 0.15,
   backgroundColor: 'white',
 },
-  from: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 8,
-    width: '100%',
-    marginTop: height * 0.03,
-  },
-  to: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 8,
-    width: '100%',
-    marginTop: height * 0.03,
-  },
-  imageStyle1:{
-   marginLeft:width*0.02,
-    height:30 // Adds spacing between image and input field
+from: {
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+to: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  top:5
+},
+imageStyle: {
+  width: 24,
+  height: 24,
+  marginRight: 10,
+  resizeMode: 'contain',
+},
+imageStyle1: {
+  width: 2,
+  height: 35,
   
-  },
-  imageStyle: {
-    width: width * 0.06,
-    height: width * 0.06,
-    marginRight: width * 0.02,
-    resizeMode: 'contain',
-  },
+marginLeft:width*0.021
+
+},
+textStyle: {
+  color: 'black',
+  fontWeight: 'bold',
+  flexShrink: 1,
+},
   inputStyles: {
     width: '100%',
     height: height * 0.055,
@@ -552,7 +519,7 @@ scrollContainer: {
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: height * 0.06,
+    marginTop: height * 0.01,
     marginBottom: height * 0.05,
   },
   continueButton: {

@@ -105,6 +105,10 @@ const requestLocationPermission = async () => {
       console.log('Camera or Photo Library permission denied');
     }
   }
+
+  requestAndroidNotificationPermission()
+
+
 };
 async function handleEnabledPressed() {
   if (Platform.OS === 'android') {
@@ -129,6 +133,17 @@ async function handleEnabledPressed() {
     }
   }
 }
+
+const requestAndroidNotificationPermission = async () => {
+  if (Platform.OS === 'android' && Platform.Version >= 33) {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+    );
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  }
+  return true; // permission is automatically granted on lower versions
+};
+
 
     // const requestLocationPermission = async () => {
     //   if (Platform.OS === 'android') {

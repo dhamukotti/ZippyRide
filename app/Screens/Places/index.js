@@ -257,9 +257,17 @@ console.log(rider.riderId)
   }}
   style={{cursor:'pointer'}}
   >
+     <Image
+            source={
+              rider.riderId === riderid
+                ? require('../../assets/carselcted.jpg') // highlighted image
+                : require('../../assets/livcar.png') // default image
+            }
+            style={{ width: 30, height: 30 }}
+          />
   
-                  <Image source={require('../../assets/livcar.png')} style={{ width: 30, height: 30 }} />
-
+                  {/* <Image source={require('../../assets/livcar.png')} style={{ width: 30, height: 30 }} /> */}
+                  
   </Marker>
 ))}
          {origin && (
@@ -394,11 +402,12 @@ console.log(rider.riderId)
     if (details && details.geometry && details.geometry.location) {
       const latitude = details.geometry.location.lat;
       const longitude = details.geometry.location.lng;
+       const description = data.description
 
       console.log("Latitude:", latitude);
       console.log("Longitude:", longitude);
 
-      setOrigin({ latitude, longitude });
+      setOrigin({ latitude, longitude,description });
       setIsOriginExpanded(false);
     }
   }}
@@ -477,11 +486,12 @@ console.log(rider.riderId)
                     if (details && details.geometry && details.geometry.location) {
                       const latitude = details.geometry.location.lat;
                       const longitude = details.geometry.location.lng;
+                      const description = data.description
                 
                       console.log("Latitude:", latitude);
                       console.log("Longitude:", longitude);
                 
-                      setDestination({ latitude, longitude });
+                      setDestination({ latitude, longitude,description });
                       setIsDestinationExpanded(false); // Collapse input on selection
                     }
                   }}
@@ -589,7 +599,11 @@ console.log(rider.riderId)
           />
         </View>
 
-        <Button onClick={() => navigation.navigate("CityToCity",{ridervalue:riderid}) } width={120}>
+        <Button onClick={() =>{
+         navigation.navigate("CityToCity",
+          {ridervalue:riderid,currentLocation:origin,tolocation:destination})
+
+         }} width={120}>
           Continue
         </Button>
         

@@ -1,6 +1,6 @@
 // App.js
 import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View,PermissionsAndroid, StyleSheet,Alert,Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { enableScreens } from 'react-native-screens';
@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import { store } from './app/Reudx/slices/store';
 import BottomTabs from './Bottomtabs';
 import SignalRComponent from './app/Screens/Places/Mapview'
+
 // Screens
 // import Landingpage from './app/Screens/landingScreen';
 import LoginScreen from './app/Screens/Login';
@@ -29,10 +30,11 @@ import VerificationSuccessScreen from './app/Screens/Forgorpassword/Verification
 import Frogotpaswordmobile from './app/Screens/Forgorpassword/Forgotpasswordmobile';
 import Forgotverifymobile from './app/Screens/Forgorpassword/Forgotverifyscreenmobile';
 import Createpasswordmobile from './app/Screens/Forgorpassword/Createpassworemobileno';
-
+import messaging from '@react-native-firebase/messaging';
 import { MainStackNavigation } from './app/navigation/mainStackNavigation';
 enableScreens();
 const Stack = createNativeStackNavigator();
+import './app/Pushnotification/PushNotification';
 
 export default function App() {
   const netInfo = useNetInfo();
@@ -40,7 +42,34 @@ export default function App() {
  
   useEffect(() => {
     SplashScreen.hide();
+    requestAndroidNotificationPermission();
+   // getFcmToken()
+
   }, []);
+
+
+  const requestAndroidNotificationPermission = async () => {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      );
+      console.log('Notification Permission:', granted);
+    }
+  };
+  const getFcmToken = async () => {
+    try {
+      const token = await messaging().getToken();
+      if (token) {
+        console.log('✅ FCM Token:', token);
+        Alert.alert('Your FCM Token', token);
+      } else {
+        console.log('❌ No token received');
+      }
+    } catch (error) {
+      console.log('❌ Error while fetching FCM token:', error);
+    }
+  };
+  
 
   return (
     <Provider store={store}>
