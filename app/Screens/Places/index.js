@@ -10,8 +10,10 @@ import {
   FlatList,
   Image,
   ScrollView,
-  Keyboard
+  Keyboard,PermissionsAndroid
 } from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+
 import { Switch } from 'react-native-switch';
 import {PERMISSIONS, request} from 'react-native-permissions';
 import SvgBack from '../../icons/SvgBack';
@@ -40,7 +42,6 @@ const signalRUrl = 'https://uat.zippyrideuserapi.projectpulse360.com/riderhub';
 
 
 
-
 const { width, height } = Dimensions.get('window');
 const userIcon = require('../../assets/human.jpg');
 const carIcon = require('../../assets/car-white.png'); 
@@ -52,11 +53,10 @@ const MARGIN_TOP = height * 0.03;
 const INPUT_WIDTH = width * 0.91;
 const INPUT_HEIGHT = height * 0.05;
 const GOOGLE_MAPS_APIKEY = 'AIzaSyDyIPNKYpe9zG_JlEEhl070cC28N0q4qbc';
-const INPUT_WIDTH1 =width * 0.91;
 const Index = () => {
   const navigation = useNavigation();
-  const [origin, setOrigin] = useState(null);
-  const [destination, setDestination] = useState(null);
+  const [origin, setOrigin] = useState("");
+  const [destination, setDestination] = useState("");
   const [isOriginExpanded, setIsOriginExpanded] = useState(false);
   const [isDestinationExpanded, setIsDestinationExpanded] = useState(false);
   const mapRef = useRef(null);
@@ -65,7 +65,7 @@ const Index = () => {
   const [selectedCar, setSelectedCar] = useState('');
   const scrollViewRef = useRef(null);
   const [riders, setRiders] = useState([]);
-
+  const inputRef = useRef();
   const carOptions = [
     { id: "1", type: "EV", image: require("../../assets/ev.png") },
     { id: "2", type: "SUV", image: require("../../assets/suv.png") },
@@ -73,29 +73,7 @@ const Index = () => {
     { id: "4", type: "SEDAN", image: require("../../assets/sedan.png") },
   ];
 
-  async function handleLocationPermission() {
-    var res = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-    if (res === 'granted') {
-      navigation.push(routesPath.MAP_VIEW_SCREEN);
-    } else if (res === 'blocked') {
-      Alert.alert(
-        'Permission',
-        'Device location permission blocked. Enable the location permission manually',
-        [
-          {
-            text: 'Cancel',
-            onPress: () => {},
-          },
-          {
-            text: 'Enable',
-            onPress: () => {
-              Linking.openSettings();
-            },
-          },
-        ],
-      );
-    }
-  }
+ 
 
   const [userLocation, setUserLocation] = useState({ lat: 12.787926, lng: 79.662123 });
   const [showFemaleOnly, setShowFemaleOnly] = useState(false);
@@ -106,6 +84,10 @@ const Index = () => {
   const [socket, setSocket] = useState(null);
   const [userToken, setUserToken] = useState(null);
 const [riderid, setriderid] = useState('')
+const [address, setaddress] = useState("")
+const [errors, setErrors] = useState({});
+
+
   useEffect(() => {
     const checkLogin = async () => {
       const token = await AsyncStorage.getItem('userToken');
@@ -186,12 +168,13 @@ const [riderid, setriderid] = useState('')
         }
       }
     );
-
+    getCurrentLocationAndAddress()
 
 
     return () => {
       keyboardDidShowListener.remove();
     };
+  
   }, [isOriginExpanded, isDestinationExpanded]);
   
   
@@ -202,15 +185,102 @@ const [riderid, setriderid] = useState('')
   };
 
 
+  const getCurrentLocationAndAddress = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message: 'This app needs access to your location.',
+            buttonPositive: 'OK',
+          }
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.warn('Location permission denied');
+          return;
+        }
+      }
+
+      Geolocation.getCurrentPosition(
+        async (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          const res = await axios.get(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_APIKEY}`
+          );
+
+          const description =
+            res.data.results[0]?.formatted_address || 'Unknown location';
+
+          setOrigin({ latitude, longitude, description });
+          setIsOriginExpanded(false);
+          inputRef.current?.setAddressText(description);
+
+          console.log('Latitude:', latitude);
+          console.log('Longitude:', longitude);
+          console.log('Description:', description);
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 10000,
+        }
+      );
+    } catch (error) {
+      console.error('Error in getting location or permission:', error);
+    }
+  };
+  
+
+
   const getallriders = async( ) =>{
     const value = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/riders/nearby?latitude=${12.787926}&longitude=${79.662123}&radius=${10}`)
     .then((res)=>{
-      console.log(res.data,'res.data')
+   //(res.data,'res.data')
 setRiders(res.data)
     })
   }
   const listMaxHeight = height * 0.4;
 
+  const validate = () => {
+    const newErrors = {};
+  
+   
+  
+    if (!destination || destination === 0) {
+      newErrors.destination = 'Please select Destination location';
+    }
+  
+  
+  
+   
+  
+    return newErrors;
+  };
+
+  const navigationcity = () => {
+    const validationErrors = validate();
+    setErrors(validationErrors); // Set validation errors in state
+  
+    // If there are any errors, stop execution
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+  
+    // If no errors, navigate to CityToCity screen
+    navigation.navigate("CityToCity", {
+      ridervalue: riderid,
+      currentLocation: origin,
+      tolocation: destination,
+    });
+    // setDestination({});
+  };
+  
 
 
   return (
@@ -224,9 +294,9 @@ setRiders(res.data)
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
-        {/* <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <SvgBack height={20} width={20} />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
 
         <MapView
           ref={mapRef}
@@ -253,7 +323,6 @@ setRiders(res.data)
     coordinate={{ latitude: rider.latitude, longitude: rider.longitude }}
   onPress={()=>{
     setriderid(rider.riderId)
-console.log(rider.riderId)
   }}
   style={{cursor:'pointer'}}
   >
@@ -270,7 +339,7 @@ console.log(rider.riderId)
                   
   </Marker>
 ))}
-         {origin && (
+         {/* {origin && (
             <Marker coordinate={origin} title="Pickup Location">
               <Image source={userIcon} style={{ width: 40, height: 40 }} />
             </Marker>
@@ -280,9 +349,9 @@ console.log(rider.riderId)
             <Marker coordinate={destination} title="Drop Location">
               <Image source={carIcon} style={{ width: 50, height: 50 }} />
             </Marker>
-          )}
+          )} */}
           
-          {origin && destination && (
+          {/* {origin && destination && (
             <MapViewDirections
               origin={origin}
               destination={destination}
@@ -295,7 +364,7 @@ console.log(rider.riderId)
                 });
               }}
             />
-          )}
+          )} */}
         </MapView>
 
         <TouchableOpacity style={styles.touch} activeOpacity={0.8}>
@@ -323,7 +392,7 @@ console.log(rider.riderId)
                 ]}
                 onPress={() => {
                   setSelectedCar(item.id);
-                  console.log(item.id);
+                  // console.log(item.id);
                 }}
               >
                 <Image source={item.image} style={styles.carImage} />
@@ -338,65 +407,8 @@ console.log(rider.riderId)
         
              <View style={styles.currentlocation}>
           <Image source={require('../../assets/live.png')} style={styles.imageStyle} />
-          {/* <GooglePlacesAutocomplete
-            placeholder="Current Location"
-          
-            onPress={(data, details = null) => {
-              if (details && details.geometry && details.geometry.location) {
-                const latitude = details.geometry.location.lat;
-                const longitude = details.geometry.location.lng;
-          
-                console.log("Latitude:", latitude);
-                console.log("Longitude:", longitude);
-          
-                setOrigin({ latitude, longitude });
-                setIsOriginExpanded(false); // Collapse input on selection
-              }
-            }}
-            textInputProps={{
-              onFocus: () =>{
-
-               setIsOriginExpanded(true)
-               setOrigin('')
-              }
-               , // Expand when focused
-              onBlur: () => setIsOriginExpanded(false), // Collapse when unfocused
-              autoFocus: false,
-              style: styles.inputStyles,
-              placeholderTextColor: 'black',
-            }}
-            styles={{
-             
-            
-              listView: {
-                position: 'absolute',
-                bottom:40+15,
-                backgroundColor: 'white',
-                maxHeight: listMaxHeight,
-                width: width*0.8,
-                marginHorizontal: 16,
-                borderRadius: 8,
-                zIndex: 10,
-                elevation: 5,
-              },
-              row: {
-                padding: 12,
-                borderBottomWidth: 1,
-                borderBottomColor: '#eee',
-              },
-            }}
-            query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
-            fetchDetails={true}
-            renderRow={(data) => <Text style={{ color: 'black' }}>{data.description}</Text>}
-            renderRightButton={() => (
-              <Pressable>
-                <Flex center middle overrideStyle={styles.svgGps}>
-                  <SvgGps fill={PRIMARY} />
-                </Flex>
-              </Pressable>
-            )}
-          /> */}
           <GooglePlacesAutocomplete
+          ref={inputRef}
   placeholder="Current Location"
   onPress={(data, details = null) => {
     if (details && details.geometry && details.geometry.location) {
@@ -493,10 +505,18 @@ console.log(rider.riderId)
                 
                       setDestination({ latitude, longitude,description });
                       setIsDestinationExpanded(false); // Collapse input on selection
+                      if (errors.destination) {
+                        setErrors((prev) => ({ ...prev, destination: null }));
+                      }
                     }
+                   
                   }}
                   textInputProps={{
-                    onFocus: () => setIsDestinationExpanded(true), // Expand when focused
+                    onFocus: () => {setIsDestinationExpanded(true)
+                      setDestination(null); 
+
+
+                    }, // Expand when focused
                     onBlur: () => setIsDestinationExpanded(false), // Collapse when unfocused
                     autoFocus: false,
                     style: styles.inputStyles,
@@ -534,7 +554,7 @@ console.log(rider.riderId)
                   }}
                   query={{ key: GOOGLE_MAPS_APIKEY, language: 'en' }}
                   fetchDetails={true}
-                  renderRow={(data) => <Text style={{color:'black'}}>{data.description}</Text>}
+                  renderRow={(data) => <Text style={{color:'black',}}>{data.description}</Text>}
                   renderRightButton={() => (
                     <Pressable>
                       <Flex center middle overrideStyle={styles.svgGps}>
@@ -545,7 +565,8 @@ console.log(rider.riderId)
                 />
                 
               </View>
-   
+              {errors.destination && <Text style={{ color: 'red',top:15,alignSelf:'baseline', marginLeft:width*0.09, fontSize:10 }}>{errors.destination}</Text>}
+
         
         <View style={styles.switchContainer}>
           <Text style={[styles.label, isAmountEnabled && styles.labelActive]}>
@@ -600,8 +621,7 @@ console.log(rider.riderId)
         </View>
 
         <Button onClick={() =>{
-         navigation.navigate("CityToCity",
-          {ridervalue:riderid,currentLocation:origin,tolocation:destination})
+       navigationcity()
 
          }} width={120}>
           Continue

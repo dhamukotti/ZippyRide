@@ -7,6 +7,7 @@ import SvgBack from '../../icons/SvgBack'
 import { useNavigation, } from '@react-navigation/native'
 const { width, height } = Dimensions.get("window");
 import Loader from '../../uikit/Loader/Loader';
+import PushNotification from 'react-native-push-notification';
 
 import SvgGps from '../../icons/SvgGps';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -55,7 +56,7 @@ const [errors, setErrors] = useState({});
   ];
 
   useEffect(() => {
-    console.log(route.params?.ridervalue,route.params?.currentLocation,'cyrr',route.params?.tolocation,'ridervalue')
+   // console.log(route.params?.ridervalue,route.params?.currentLocation,'cyrr',route.params?.tolocation,'ridervalue')
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       (e) => {
@@ -78,55 +79,7 @@ const [errors, setErrors] = useState({});
 
 
  const useridvalue =getItem('userdata')
-console.log(useridvalue,'useridvalue')
-
-//   const formik = useFormik({
-//     initialValues: {
-//        userId: "", 
-//        pickupLocation: "", 
-//        pickupLatitude: "" ,
-//        pickupLongitude: "",
-//         dropLocation: "", 
-//         dropLatitude: "",
-//          dropLongitude:"",
-//           vehId: "",
-//          payBy:"",
-//           riderId: ""
-//     },
-//     validationSchema: SignUpSchema,
-//     onSubmit: async (values) => {
-      
-//       try {
-  
-//         const payload = {
-//           userId:useridvalue, 
-//           pickupLocation: "Location A", 
-//           pickupLatitude: origin.latitude ,
-//           pickupLongitude: origin.longitude,
-//            dropLocation: "Location B", 
-//            dropLatitude:origin.latitude,
-//             dropLongitude:origin.longitude,
-//              vehId: 1,
-//             payBy:"Cash",
-//              riderId: route.params?.ridervalue
-//         };
-//         console.log(payload,'payload')
-//         const response = await tripbooking(payload);
-  
-//     console.log(response,'response')
-//         if (response.error) {
-        
-        
-
-//           console.error('Signup Error:', response.error);
-//         }else {
-       
-//         }
-//       } catch (error) {
-//         console.error('Signup failed:', error);
-//       }
-//     },
-//   });
+//console.log(useridvalue,'useridvalue')
 
 
 const validate = () => {
@@ -180,6 +133,13 @@ const handleSubmit = async () => {
       console.error('Trip Booking Error:', response.error);
     } else {
       // success logic here
+      PushNotification.localNotification({
+        channelId: "com.zippyride", // must match your created channel
+        title: "Trip Booked!",
+        message: "Your ride has been successfully booked.",
+        playSound: true,
+        soundName: "default",
+      });
     }
   } catch (error) {
     console.error('Trip Booking Failed:', error);
@@ -279,7 +239,7 @@ showsVerticalScrollIndicator={false}
                 searchPlaceholder="Search..."
               value={carType}
               onChange={(item) => {
-                console.log(item.value)
+             //   console.log(item.value)
                 setCarType( item.value)}}
               renderItem={item => (
                 <View style={styles.item}>
@@ -321,9 +281,9 @@ showsVerticalScrollIndicator={false}
               <InputText
                               overrideStyle={{textAlignVertical: 'top'}}
                               height={130}
-                              numberOfLines={30}
+                              numberOfLines={20}
                               multiline
-                              maxLength={4000}
+                              maxLength={3000}
                               actionLeftStyle={{left: -4, top: 0}}
                              
                             
@@ -505,7 +465,7 @@ textStyle: {
     marginBottom: height * 0.01,
   },
   commandinput: {
-    marginBottom: height * 0.02,
+    marginBottom: height * 0.01,
   },
   svgGps: {
     position: 'absolute',
