@@ -1,4 +1,4 @@
-import { StyleSheet,Pressable, ScrollView
+import { StyleSheet,Pressable,Alert, ScrollView
   ,TextInput, Image,Text,Dimensions,Platform,
    View ,KeyboardAvoidingView, Keyboard,
    TouchableOpacity} from 'react-native'
@@ -50,6 +50,10 @@ const Citytocity = ({route}) => {
 const [userid, setuserid] = useState('')
 const [errors, setErrors] = useState({});
 const [when, setwhen] = useState('Now')
+const [cartypelist, setcartypelist] = useState([])
+const [nopassengers, setnopassengers] = useState("")
+const [selectedVehicle, setSelectedVehicle] = useState(null);
+
   const carTypeList = [
     { label: 'EV', value: 1,id:1 },
     { label: 'SUV', value: 2,id:2 },
@@ -123,12 +127,16 @@ const handleSubmit = async () => {
     dropLocation: route.params?.tolocation.description,
     dropLatitude:route.params?.tolocation.latitude,
     dropLongitude: route.params?.tolocation.longitude,
-    vehId: 1,
-    payBy: "Cash",
-    riderId:1 // route.params?.ridervalue 
+    vehId:  carType,
+    // payBy: "Cash",
+    riderId: route.params?.ridervalue 
+
+
+    
   };
 
   try {
+    console.log(payload)
     const response = await tripbooking(payload);
     console.log(response, 'response');
     setloading(false)
@@ -163,12 +171,50 @@ const getfareamount = async()=>{
 }
 
 const getvechiles = async()=>{
-  const data = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/trips/nearby-riders-bynoofpassengers?latitude=${route.params?.currentLocation.latitude}&longitude=${route.params?.currentLocation.longitude}&noOfPassengers=3&radiusKm=10
+  const data = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/trips/nearby-vehicles?latitude=${12.784401581853858}&longitude=${79.6657357619943}&radiusKm=5
+
 
 `).then((res)=>{
-  console.log(res.data)
+  console.log(res.data,'vechil')
+
+  const carTypeList = res.data.map(vehicle => ({
+    label: `${vehicle.vehicleName} - ${vehicle.vehicleNumber}`,
+    value: vehicle.vehId,
+    ...vehicle, // optional, if you want all data accessible in onChange
+  }));
+  setcartypelist(carTypeList)
 })
 }
+
+const handlePassengerInput = (text) => {
+  // Always allow empty input (user deleting)
+  if (text === '') {
+    setnopassengers('');
+    return;
+  }
+
+  const value = parseInt(text);
+
+  // If input is not a number or 0 or below
+  if (isNaN(value) || value <= 0) {
+    Alert.alert('Invalid Input', 'Passenger count must be at least 1.');
+    return;
+  }
+
+  // If it exceeds allowed capacity
+  if (selectedVehicle && value > selectedVehicle.passengerCapacity) {
+    Alert.alert(
+      'Passenger Limit Exceeded',
+      `Maximum allowed: ${selectedVehicle.passengerCapacity}`
+    );
+    return;
+  }
+
+  // Valid input
+  setnopassengers(text);
+};
+
+
 
   return (
     <KeyboardAvoidingView
@@ -253,7 +299,7 @@ showsVerticalScrollIndicator={false}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
-                data={carTypeList}
+                data={cartypelist}
                 // search
                 maxHeight={300}
                 labelField="label"
@@ -262,13 +308,23 @@ showsVerticalScrollIndicator={false}
                 searchPlaceholder="Search..."
               value={carType}
               onChange={(item) => {
-             //   console.log(item.value)
-                setCarType( item.value)}}
-              renderItem={item => (
+                console.log("Selected vehId:", item.vehId,item.passengerCapacity);
+                setCarType(item.vehId);
+                //setnopassengers(item.passengerCapacity)
+                setSelectedVehicle(item);
+                setnopassengers('');
+              
+                setnopassengers(item.passengerCapacity.toString())
+                // Optional: If you want to store full item
+                // setSelectedVehicle(item);
+              }}
+              renderItem={(item) => (
                 <View style={styles.item}>
-                  <Text style={styles.itemText}>{item.label}</Text>
+                  <Text style={styles.itemText}>
+                    {item.vehicleName} ({item.vehicleNumber})
+                  </Text>
                 </View>
-                 )}
+              )}
               />
           </View>
 
@@ -276,11 +332,24 @@ showsVerticalScrollIndicator={false}
 
              <View style={styles.inputWrapperINPUT}>
 
+             {selectedVehicle && (
+        <Text style={styles.capacityText}>
+          Max Passengers Allowed: {selectedVehicle.passengerCapacity}
+        </Text>
+      )}
+
                        <InputText
                                   name="Now"
-                                types='number'
-                                  placeholder="5"
+                                  keyboardType="numeric"
+                                  value={nopassengers}
+                               //   placeholder="5"
+                                  placeholder="Enter no. of passengers"
+                            //    onChangeText={handlePassengerInput}
+                                onChange={handlePassengerInput}
+
                                 />
+                          
+                               
                      
                     </View>
         

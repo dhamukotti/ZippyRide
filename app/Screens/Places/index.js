@@ -18,7 +18,7 @@ import { Switch } from 'react-native-switch';
 import {PERMISSIONS, request} from 'react-native-permissions';
 import SvgBack from '../../icons/SvgBack';
 import { useNavigation } from '@react-navigation/native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker,Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { API_KEY } from '../uikit/UikitUtils/constants';
@@ -86,7 +86,7 @@ const Index = () => {
 const [riderid, setriderid] = useState('')
 const [address, setaddress] = useState("")
 const [errors, setErrors] = useState({});
-
+const [ridersvalue, setridersvalue] = useState([])
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -278,12 +278,25 @@ setRiders(res.data)
       currentLocation: origin,
       tolocation: destination,
     });
+    // navigation.navigate("Ridesuccess", {
+    //   ridervalue: riderid,
+    //   currentLocation: origin,
+    //   tolocation: destination,
+    // });
+    
     // setDestination({});
   };
   
 
+const getriderdetails=async (id)=>{
+  const value = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/riders/${id}/ridervechiledetails
+`).then((res)=>{
+  console.log(res.data,'value')
+  setridersvalue([res.data])
+})
 
-  return (
+}
+   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
@@ -317,7 +330,7 @@ setRiders(res.data)
     </View>
   </Marker>
 )}
-    {riders.map((rider) => (
+    {/* {riders.map((rider) => (
   <Marker
     key={rider.riderId}
     coordinate={{ latitude: rider.latitude, longitude: rider.longitude }}
@@ -329,16 +342,80 @@ setRiders(res.data)
      <Image
             source={
               rider.riderId === riderid
-                ? require('../../assets/carselcted.jpg') // highlighted image
-                : require('../../assets/livcar.png') // default image
+                ? require('../../assets/carselcted.jpg') 
+                : require('../../assets/livcar.png') 
             }
             style={{ width: 30, height: 30 }}
           />
   
-                  {/* <Image source={require('../../assets/livcar.png')} style={{ width: 30, height: 30 }} /> */}
                   
   </Marker>
+))} */}
+{riders.map((rider) => (
+  <Marker
+    key={rider.riderId}
+    coordinate={{ latitude: rider.latitude, longitude: rider.longitude }}
+    onPress={() => {setriderid(rider.riderId)
+      getriderdetails(rider.riderId)
+
+    }}
+  >
+    <Image
+      source={require('../../assets/livcar.png')}
+      style={{ width: 30, height: 30 }}
+    />
+
+    <Callout tooltip>
+      {ridersvalue != '' ? (
+        <View style={styles.calloutContainer}>
+          <View style={styles.card}>
+            <View style={styles.headerRow}>
+              <Image
+                source={require('../../assets/alet.png')}
+                style={styles.profileImage}
+                resizeMode="cover"
+              />
+              {ridersvalue.map((data)=>(
+              
+
+             
+              <View style={{ marginLeft: 10 }}>
+                <Text style={styles.name}>{data.riderName}</Text>
+                <Text style={styles.sub}>25 Years ⭐ 4.5</Text>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>Professional Driver</Text>
+                </View>
+                
+              </View>
+               ))}
+            </View>
+
+            <View style={styles.detailsRow}>
+              <Text style={styles.label}>Vehicle:</Text>
+              <Text style={styles.value}>Tata Nexon</Text>
+              <Text style={styles.label}>Model:</Text>
+              <Text style={styles.value}>2024</Text>
+            </View>
+
+            <View style={styles.detailsRow}>
+              <Text style={styles.label}>Vehicle Number:</Text>
+              <Text style={styles.value}>TN 57 AZ 1234</Text>
+              <Text style={styles.label}>Color:</Text>
+              <Text style={styles.value}>Silver</Text>
+            </View>
+          </View>
+        </View>
+      ) : (
+        <View style={{ width: 0, height: 0 }} /> // Invisible empty callout
+      )}
+    </Callout>
+  </Marker>
 ))}
+
+     
+     
+     
+     
          {/* {origin && (
             <Marker coordinate={origin} title="Pickup Location">
               <Image source={userIcon} style={{ width: 40, height: 40 }} />
@@ -826,4 +903,67 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 10,
   },
+  calloutContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  card: {
+    width: 260,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  name: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#000',
+  },
+  sub: {
+    fontSize: 12,
+    color: '#555',
+    marginVertical: 2,
+  },
+  badge: {
+    backgroundColor: '#E6F9EF',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+    marginTop: 2,
+    alignSelf: 'flex-start',
+  },
+  badgeText: {
+    color: 'green',
+    fontSize: 11,
+  },
+  detailsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 5,
+  },
+  label: {
+    fontSize: 12,
+    color: '#888',
+    width: '48%',
+  },
+  value: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    width: '48%',
+    textAlign: 'right',
+  },
+
+
+
 });
