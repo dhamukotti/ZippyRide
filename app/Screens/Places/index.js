@@ -239,7 +239,7 @@ const [errors, setErrors] = useState({});
 
 
   const getallriders = async( ) =>{
-    const value = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/riders/nearby?latitude=${12.787926}&longitude=${79.662123}&radius=${10}`)
+    const value = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/riders/nearby?latitude=${12.784401581853858}&longitude=${79.6657357619943}&radius=${10}`)
     .then((res)=>{
    //(res.data,'res.data')
 setRiders(res.data)
@@ -302,8 +302,8 @@ setRiders(res.data)
           ref={mapRef}
           style={styles.mapBox}
           initialRegion={{
-            latitude: 12.787926,
-            longitude:  79.662123,
+            latitude: 12.784401581853858,
+            longitude:  79.6657357619943,
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           }}

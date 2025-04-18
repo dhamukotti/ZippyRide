@@ -33,6 +33,9 @@ import Createpasswordmobile from './app/Screens/Forgorpassword/Createpassworemob
 import messaging from '@react-native-firebase/messaging';
 import { MainStackNavigation } from './app/navigation/mainStackNavigation';
 enableScreens();
+
+import Ridesuccess from './app/Screens/BookingSuccess/Ridesuccess';
+
 const Stack = createNativeStackNavigator();
 import './app/Pushnotification/PushNotification';
 
@@ -98,7 +101,8 @@ export default function App() {
               <Stack.Screen name="Frogotpaswordmobile" component={Frogotpaswordmobile} />
               <Stack.Screen name="Forgotverifymobile" component={Forgotverifymobile} />
               <Stack.Screen name="Createpasswordmobile" component={Createpasswordmobile} />
-              
+              <Stack.Screen name="Ridesuccess" component={Ridesuccess} />
+
               {/* Main App with Bottom Tabs */}
               {/* <Stack.Screen name="Main" component={BottomTabs} /> */}
               <Stack.Screen 

@@ -5,9 +5,9 @@ import SvgBack from '../../icons/SvgBack';
 import { useNavigation } from "@react-navigation/native";
 const { width, height } = Dimensions.get("window");
 const isSmallScreen = width < 380;
-const Ridesuccess = () => {
+const Ridesuccess = ({route}) => {
       const navigation = useNavigation()
-      
+      console.log(route.params.value,'value')
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -18,87 +18,26 @@ const Ridesuccess = () => {
             </TouchableOpacity>
 
       {/* Ride Info */}
-      <View style={styles.rideInfoContainer}>
-        <View style={styles.rideDetails}>
-          <Text style={styles.rideLive}>13 Apr 2025</Text>
-          <View style={styles.iconContainer}>
-      </View>
+                  <View style={styles.cardContainer}>
+         <View style={styles.from}>
+           <Image source={require('../../assets/live.png')} style={styles.imageStyle} />
+           <Text style={styles.textStyle}>
+             Chennai
+           </Text>
+         </View>
+   
+         <Image source={require('../../assets/Line1.png')} style={styles.imageStyle1} />
+   
+         <View style={styles.to}>
+           <Image source={require('../../assets/locationicon.png')} style={styles.imageStyle} />
+           <Text style={styles.textStyle}>
+            Ayyangarkulam
+           </Text>
+         </View>
+       </View>
 
-      {/* Name & Verification */}
-      <View style={styles.textContainer}>
-        <View style={styles.nameRow}>
-        <Image source={require("../../assets/Uservi.png")} style={styles.userIcon} />
-
-          <Text style={styles.riderName}>Ashik</Text>
-          <Image source={require("../../assets/Vector.png")} style={styles.verificationIcon} />
-        </View>
-        <Text style={styles.riderDistance}>9.4 Kms</Text>
-      </View>
-        </View>
-
-       
-        <View style={styles.arrivalContainer}>
-  <ImageBackground 
-    source={require("../../assets/success.png")} 
-    style={styles.arrivalBackground} 
-    resizeMode="contain"
-  >
-    <Text style={styles.arrivalText}>Ride Completed</Text>
-  </ImageBackground>
-</View>
-
-        <View style={styles.fareContainer}>
-          <Text style={styles.fare}>₹ 260.00</Text>
-          <Image source={require("../../assets/H.png")} style={styles.carIcon} />
-          <Text style={styles.carType}>HATCHBACK</Text>
-        </View>
-      </View>
-
-      {/* QR Code */}
       <View >
-      <View style={styles.card}>
-        <View style={styles.detailsContainer}>
-          <Text style={styles.label}>When</Text>
-          <Text style={styles.value}>13 Mar 2025 · 05:23 PM</Text>
-
-          <Text style={styles.label}>From</Text>
-          <Text style={styles.value}>Pallavaram</Text>
-
-          <Text style={styles.label}>To</Text>
-          <Text style={styles.value}>Guindy</Text>
-
-          <Text style={styles.label}>Distance</Text>
-          <Text style={styles.value}>9.4 Kms</Text>
-
-          <Text style={styles.label}>Duration</Text>
-          <Text style={styles.value}>34 minutes</Text>
-
-          <Text style={styles.label}>Status</Text>
-          <Text style={styles.value}>Completed</Text>
-
-          <Text style={styles.label}>Rider Name</Text>
-          <Text style={styles.value}>Ashik</Text>
-
-          <Text style={styles.label}>Ride ID</Text>
-          <Text style={styles.value}>ZR45792095798873958</Text>
-
-          <Text style={styles.label}>Rated</Text>
-          <Text style={styles.value}>Yes</Text>
-
-          <Text style={styles.label}>Ratings</Text>
-          <Text style={styles.value}>4/5</Text>
-        </View>
-
-        <View style={styles.paymentContainer}>
-          <Text style={styles.paymentText}>Fare: <Text style={styles.value}>260.00</Text></Text>
-          <Text style={styles.paymentText}>Tip for Rider: <Text style={styles.value}>0.00</Text></Text>
-          <Text style={styles.paymentText}>Total Fare: <Text style={styles.value}>260.00</Text></Text>
-          <Text style={styles.paymentText}>Payment Status: <Text style={styles.value}>Completed</Text></Text>
-          <Text style={styles.paymentText}>Payment Mode: <Text style={styles.value}>UPI Payment</Text></Text>
-          <Text style={styles.paymentText}>Transaction ID: <Text style={styles.value}>DB9579887395845792</Text></Text>
-          <Text style={styles.paymentText}>Invoice on Mail: <Text style={styles.value}>Yes</Text></Text>
-        </View>
-      </View>
+     
 
 
 
@@ -118,7 +57,35 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: "white",
       alignItems: "center",
-      paddingTop: height * 0.05,
+      paddingTop: height * 0.08,
+    },
+    cardContainer: {
+      width: width * 0.9,
+      padding: 15,
+      borderRadius: 19,
+      backgroundColor: 'whitesmoke',
+      elevation: 4, // For Android
+      shadowColor: '#000', // For iOS
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      alignSelf: 'center',
+      marginTop: 20,
+    },
+    from: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    header:{
+      color:'black',
+      fontSize:17,
+      marginLeft:width*0.02,
+      fontWeight:'bold'
+    },
+    to: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      top:5
     },
     backButton: {
       position: 'absolute',
@@ -128,26 +95,26 @@ const styles = StyleSheet.create({
       zIndex: 10,
       padding: 10,
     },
-    header: {
-      fontSize: 18,
-      fontWeight: "bold",
-      color:'black',
-      alignSelf: "flex-start",
-      marginLeft: width * 0.02,
-      marginTop:height*0.00
+    textStyle: {
+      color: 'black',
+      fontWeight: 'bold',
+      flexShrink: 1,
     },
-    iconContainer: {
-      backgroundColor: "#F4E77E",
-      borderRadius: width * 0.1,
-      padding: width * 0.02,
+    imageStyle: {
+      width: 24,
+      height: 24,
+      marginRight: 10,
+      resizeMode: 'contain',
+    },
+    imageStyle1: {
+      width: 2,
+      height: 35,
+      
+    marginLeft:width*0.021
     
     },
-    userIcon: {
-      width: width * 0.07,
-      height: width * 0.08,
-      marginLeft: width*0.00,
-      alignSelf:'flex-start'
-    },
+    
+
     textContainer: {
       marginLeft: width * 0.02,
       flexDirection: "column",
@@ -174,7 +141,7 @@ const styles = StyleSheet.create({
     },
     rideInfoContainer: {
       width: width * 0.9,
-      backgroundColor: "#F4E77E",
+      backgroundColor: "gray",
       borderRadius: 10,
       padding: width * 0.03,
       flexDirection: "row",

@@ -23,6 +23,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import 'react-native-get-random-values';
 import Button from '../../uikit/Button/Button';
 import { getItem } from '../../uikit/UikitUtils/mmkvStorage';
+import axios from 'axios';
 
 
 const BOX_WIDTH = width * 0.9;
@@ -41,13 +42,14 @@ const Citytocity = ({route}) => {
   const mapRef = useRef(null);
     const [tripbooking, { isLoading: isSignupLoading }] = useTripbookMutation();
   const [loading, setloading] = useState(false)
-  
+  const [Amount, setAmount] = useState('')
   const [isEnabled, setIsEnabled] = useState(false);
   const scrollViewRef = useRef(null);
   const [carType, setCarType] = useState('');
   const [showDropDown, setShowDropDown] = useState(false);
 const [userid, setuserid] = useState('')
 const [errors, setErrors] = useState({});
+const [when, setwhen] = useState('Now')
   const carTypeList = [
     { label: 'EV', value: 1,id:1 },
     { label: 'SUV', value: 2,id:2 },
@@ -69,7 +71,8 @@ const [errors, setErrors] = useState({});
         }
       }
     );
-
+    getfareamount()
+    getvechiles()
     return () => {
       keyboardDidShowListener.remove();
     };
@@ -122,13 +125,14 @@ const handleSubmit = async () => {
     dropLongitude: route.params?.tolocation.longitude,
     vehId: 1,
     payBy: "Cash",
-    riderId: route.params?.ridervalue
+    riderId:1 // route.params?.ridervalue 
   };
 
   try {
     const response = await tripbooking(payload);
     console.log(response, 'response');
     setloading(false)
+    navigation.navigate('Ridesuccess',{value:response})
     if (response.error) {
       console.error('Trip Booking Error:', response.error);
     } else {
@@ -146,6 +150,25 @@ const handleSubmit = async () => {
   }
 };
 
+
+
+const getfareamount = async()=>{
+  const data = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/riders/estimate-fare?pickupLatitude=${route.params?.currentLocation.latitude}&pickupLongitude=${route.params?.currentLocation.longitude}&dropLatitude=${route.params?.tolocation.latitude}&dropLongitude=${route.params?.tolocation.longitude}&isPeakHour=false`)
+  .then((res)=>{
+    console.log(res.data.estimatedFare)
+    const value = 
+    // setAmount(re)
+    setAmount(res.data.estimatedFare)
+  })
+}
+
+const getvechiles = async()=>{
+  const data = await axios.get(`https://uat.zippyrideuserapi.projectpulse360.com/api/trips/nearby-riders-bynoofpassengers?latitude=${route.params?.currentLocation.latitude}&longitude=${route.params?.currentLocation.longitude}&noOfPassengers=3&radiusKm=10
+
+`).then((res)=>{
+  console.log(res.data)
+})
+}
 
   return (
     <KeyboardAvoidingView
@@ -211,16 +234,16 @@ showsVerticalScrollIndicator={false}
        */}
    <View style={styles.inputContainer}>
     
-          {/* <Text style={styles.label}> When</Text>
+           <Text style={styles.label}> When</Text>
 
           <View style={styles.When}>
 
             <InputText
                         name="Now"
-                      
+                      value={when}
                         placeholder="Now"
                       />
-          </View> */}
+          </View> 
           <View>
           <Text style={{top:height*0.02,color:'black',fontSize:14}}> Vehicle</Text>
 
@@ -267,7 +290,7 @@ showsVerticalScrollIndicator={false}
            
            <InputText
                         name="Now"
-                      
+                      value={Amount.toString()}
                         placeholder="500"
                       />
           </View>
@@ -280,10 +303,10 @@ showsVerticalScrollIndicator={false}
      <View style={styles.commandinput}>
               <InputText
                               overrideStyle={{textAlignVertical: 'top'}}
-                              height={130}
-                              numberOfLines={20}
+                              height={70}
+                              numberOfLines={30}
                               multiline
-                              maxLength={3000}
+                              maxLength={4000}
                               actionLeftStyle={{left: -4, top: 0}}
                              
                             
@@ -296,8 +319,9 @@ showsVerticalScrollIndicator={false}
              <View style={styles.buttonContainer}>
                            <TouchableOpacity 
                               onPress={handleSubmit}
+                            // onPress={()=>navigation.navigate('Ridesuccess',)}
                            style={styles.continueButton}>
-                               <Text style={styles.continueText}>Continue</Text>
+                               <Text style={styles.continueText}>Book Ride</Text>
                            </TouchableOpacity>
                           
                            <TouchableOpacity style={styles.cancelButton}>
